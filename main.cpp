@@ -1,3 +1,4 @@
+#include <map>
 #include <unistd.h>
 #include <sys/time.h>
 #include <stack>
@@ -16,13 +17,45 @@
 
 int main(void)
 {
-	vector_test();
-	stack_test();
-	pair_test();
+	// vector_test();
+	// stack_test();
+	// pair_test();
 	map_test();
+
+
+	// ft::Map<int, int> m;
+	// for (int i = 1; i < 10; i++)
+	// 	m[i] = i;
+	// ft::Map<int, int>::iterator it = m.begin();
+	// std::cout << it->first << std::endl;
+	// it->first = 99;
+
+
+	// node<int, int>  *end = m._tree.subtree_last(m._tree.root);
+	// for (; tmp != end; tmp = m._tree.successor(tmp))
+	// 	std::cout << tmp->pair.first << std::endl;
+	// std::cout << tmp->pair.first << std::endl;
+	
+	
+	// std::map<int, int> m;
+	// m[1] = 1;
+	// m[2] = 2;
+	// m[3] = 3;
+	// std::map<int, int>::iterator it = m.begin();
+	// std::cout << it->first << std::endl;
+	// it++;
+	// std::cout << it->first << std::endl;
+
+
+
+
+
+	// std::map<int, int> std_map;
+	// std::map<int, int>::iterator it_s =  std_map.begin();
+	// std::cout << it_s->second << std::endl;
 	
 
-
+	
 	// Btree<int, int>	tree;
 
 	// tree.insert_element(new ft::Pair<int, int>(10, 10));

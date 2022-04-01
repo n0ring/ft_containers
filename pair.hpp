@@ -8,7 +8,7 @@ template<typename T1, typename T2>
 class Pair
 {
 		public:
-
+		
 		typedef	T1	first_type;
 		typedef	T2	second_type;
 
