@@ -49,13 +49,13 @@ static void insert_test_u(std::vector<int> &V, struct s_time_res &res)
 	res.ft_start = timer();
 	
 	_map m;
-	// m[5000] = 5000;
 	for (int i = 0; i < 10000; i++)
 		m[i] = i;
 	V.push_back(m[10]);
 	V.push_back(m[11]);
 	V.push_back(m[1100]);
 	V.push_back(m[15]);
+	V.push_back(m.size());
 
 	res.ft_end = timer();
 }
@@ -67,13 +67,13 @@ static void insert_test_s(std::vector<int> &V, struct s_time_res &res)
 	res.std_start = timer();
 
 	_map m;
-	// m[5000] = 5000;
 	for (int i = 0; i < 10000; i++)
 		m[i] = i;
 	V.push_back(m[10]);
 	V.push_back(m[11]);
 	V.push_back(m[1100]);
 	V.push_back(m[15]);
+	V.push_back(m.size());
 
 	res.std_end = timer();
 }

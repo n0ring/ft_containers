@@ -1,24 +1,24 @@
-// #include <unistd.h>
-// #include <sys/time.h>
-// #include <stack>
-// #include <vector>
-// #include <iomanip>
-// #include <iterator>
-// #include "Stack.hpp"
-// #include "Vector.hpp"
-// #include "pair.hpp"
-// #include "Binary_tree.hpp"
-// #include "Map.hpp"
-void map_test(void);
+#include <unistd.h>
+#include <sys/time.h>
+#include <stack>
+#include <vector>
+#include <iomanip>
+#include <iterator>
+#include "Stack.hpp"
+#include "Vector.hpp"
+#include "pair.hpp"
+#include "Binary_tree.hpp"
+#include "Map.hpp"
+
 
 // #include "iterators/Iterator.hpp"
 
 
 int main(void)
 {
-	// vector_test();
-	// stack_test();
-	// pair_test();
+	vector_test();
+	stack_test();
+	pair_test();
 	map_test();
 	
 

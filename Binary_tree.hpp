@@ -295,6 +295,23 @@ public:
 		return new_el;
 	}
 
+	node *subtree_insert_before(node *subtree, node *new_el)
+	{
+		node *prec;
+		if (subtree->left == NULL)
+		{
+			subtree->left = new_el;
+			new_el->parrent = subtree;
+		}
+		else
+		{
+			prec =  precessor(subtree);
+			prec->right = new_el;
+			new_el = prec;
+		}
+		return new_el;
+	}
+
 	void subtree_delete(node *el)
 	{
 		if (el->right == NULL && el->left == NULL)
@@ -333,6 +350,7 @@ public:
 		}
 		return tmp_p;
 	}
+
 
 	void swap(node *to_del, node *to_swap)
 	{

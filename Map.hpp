@@ -48,14 +48,23 @@ class Map
 		node *res = _tree.find(k);
 		if (res == NULL)
 		{
+			_size++;
 			_tree.root = new node(make_pair(k, mapped_type() )) ;
 			return _tree.root->pair.second;
 		}
 		if (res->pair.first != k)
 		{
 			_size++;
-			return (_tree.subtree_insert_after(res, new node(make_pair(k, mapped_type())) ) )->pair.second;
-			//  return (_tree.insert_element()->pair.second;
+			if (k > res->pair.first)
+			{
+				return (_tree.subtree_insert_after(res,
+					new node(make_pair(k, mapped_type()))))->pair.second;
+			}
+			else
+			{
+				return (_tree.subtree_insert_before(res,
+					new node(make_pair(k, mapped_type()))))->pair.second;
+			}
 		}
 		return (res->pair.second);
 	}

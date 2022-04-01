@@ -1,0 +1,5 @@
+main
+.DS_Store
+*.d
+*.o
+ft_containers
