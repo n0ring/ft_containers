@@ -46,11 +46,16 @@ class Map
 	mapped_type& operator[] (const key_type& k)
 	{
 		node *res = _tree.find(k);
-
 		if (res == NULL)
 		{
+			_tree.root = new node(make_pair(k, mapped_type() )) ;
+			return _tree.root->pair.second;
+		}
+		if (res->pair.first != k)
+		{
 			_size++;
-			 return (_tree.insert_element(make_pair(k, mapped_type())))->pair.second;
+			return (_tree.subtree_insert_after(res, new node(make_pair(k, mapped_type())) ) )->pair.second;
+			//  return (_tree.insert_element()->pair.second;
 		}
 		return (res->pair.second);
 	}

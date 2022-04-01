@@ -284,13 +284,15 @@ public:
 
 
 
-	void subtree_insert_after(node* subtree, node *new_el)
+	node* subtree_insert_after(node* subtree, node *new_el)
 	{
 		new_el->parrent = subtree;
+
 		if (subtree->right == NULL)
 			subtree->right = new_el;
 		else
 			successor(subtree)->left = new_el;
+		return new_el;
 	}
 
 	void subtree_delete(node *el)
@@ -318,8 +320,10 @@ public:
 	node *find(key_type n)
 	{
 		node *tmp = root;
+		node *tmp_p = NULL;
 		while (tmp != NULL)
 		{
+			tmp_p = tmp;
 			if (tmp->pair.first == n)
 				return (tmp);
 			if (n < tmp->pair.first)
@@ -327,7 +331,7 @@ public:
 			else
 				tmp = tmp->right;
 		}
-		return NULL;
+		return tmp_p;
 	}
 
 	void swap(node *to_del, node *to_swap)
