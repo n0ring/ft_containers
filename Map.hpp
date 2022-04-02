@@ -13,8 +13,8 @@ namespace ft
 template<typename T>
 class iterator_map
 {
-	typedef typename T::first_type key_type;
-	typedef typename T::second_type v_type;
+	// typedef typename T::first_type key_type;
+	// typedef typename T::second_type v_type;
 
 	private:
 		T *current;
@@ -25,8 +25,10 @@ class iterator_map
 		typedef typename iterator_traits<T*>::iterator_category		iterator_category;
 		typedef typename iterator_traits<T*>::value_type			value_type;
 		typedef typename iterator_traits<T*>::difference_type		difference_type;
-		typedef typename iterator_traits<T*>::reference				reference;
-		typedef typename iterator_traits<T*>::pointer				pointer;
+		typedef typename  iterator_type::reference_type 			reference;
+		typedef typename  iterator_type::pointer					pointer;
+		// typedef typename iterator_traits<T*>::reference				reference;
+		// typedef typename iterator_traits<T*>::pointer				pointer;
 
 
 		iterator_map(void) : current() {}
@@ -41,10 +43,10 @@ class iterator_map
 		}
 
 		pointer base() const { return (current); }
-		reference operator*() const {  return *(current); }
+		reference operator*() const {  return (current->pair); }
 		
-		iterator_map operator+ (difference_type n) const
-		{ return static_cast<iterator_map>(current + n); }
+		// iterator_map operator+ (difference_type n) const
+		// { return static_cast<iterator_map>(current + n); }
 
 		// iterator_map& operator++() { ++current; return *this; }
 		// iterator_map  operator++(int i) {
@@ -65,7 +67,8 @@ class iterator_map
 		// 	return *this;
 		// }
 		// iterator_map& operator-= (difference_type n) { current -= n; return *this; }
-		// pointer operator->() const { return &((operator*()).pair) ; }
+		// pointer operator->() const { return &((operator*())) ; }
+		pointer operator->() const { return &((operator*())) ; }
 		// reference operator[](difference_type n) const { return *(*this + n); }
 
 };
@@ -90,7 +93,7 @@ class Map
 		typedef typename allocator_type::size_type				size_type;
 		typedef	Compare											key_compare;
 		typedef ft::Pair<Key, mapped_type> 						pair_type;	
-		typedef ft::iterator_map<pair_type>						iterator;
+		typedef ft::iterator_map<node>						iterator;
 		typedef typename iterator::difference_type  			difference_type;
 		// typedef Compare<Key>									Compare;
 
@@ -109,7 +112,7 @@ class Map
 
 		iterator begin()
 		{
-			return static_cast<iterator>(& (_tree.subtree_first(_tree.root)->pair) );
+			return static_cast<iterator>( _tree.subtree_first(_tree.root) );
 		}
 
 		// iterator end()

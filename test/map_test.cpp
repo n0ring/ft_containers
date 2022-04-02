@@ -127,8 +127,10 @@ static void begin_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.empty());
 	V.push_back(m.size());
 	_map::iterator it = m.begin();
+	// *it
 	std::cout << (*it).first << std::endl;
-	std::cout << (*it).second << std::endl;
+	std::cout << it->first << std::endl;
+	// std::cout << (*it) << std::endl;
 	// V.push_back(m.begin()->first);
 
 	res.ft_end = timer();
@@ -150,6 +152,7 @@ static void begin_test_s(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.size());
 	_map::iterator it = m.begin();
 	std::cout << (*it).first << std::endl;
+	std::cout << it->first << std::endl;
 
 	// V.push_back(m.begin()->first);
 

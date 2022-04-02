@@ -11,6 +11,8 @@ struct node
 		typedef Value							mapped_type;
 		typedef	node<key_type, mapped_type>		node_type;
 		typedef ft::Pair<key_type, mapped_type> pair_type;		
+		typedef pair_type&						reference_type;		
+		typedef pair_type*						pointer;		
 		
 		// key_type	key;
 		// mapped_type	value;
