@@ -49,6 +49,7 @@ static void insert_test_u(std::vector<int> &V, struct s_time_res &res)
 	res.ft_start = timer();
 	
 	_map m;
+	m[5000] = 5000000;
 	for (int i = 0; i < 10000; i++)
 		m[i] = i;
 	V.push_back(m[10]);
@@ -67,6 +68,7 @@ static void insert_test_s(std::vector<int> &V, struct s_time_res &res)
 	res.std_start = timer();
 
 	_map m;
+	m[5000] = 5000000;
 	for (int i = 0; i < 10000; i++)
 		m[i] = i;
 	V.push_back(m[10]);
@@ -118,20 +120,32 @@ static void begin_test_u(std::vector<int> &V, struct s_time_res &res)
 	
 	res.ft_start = timer();
 	
+
 	_map m;
 
 	V.push_back(m.empty());
 	for (int i = 1; i < 1000; i++)
-		m[i] = i;
+		m[i] = i * 100;
 	V.push_back(m[50]);
 	V.push_back(m.empty());
 	V.push_back(m.size());
 	_map::iterator it = m.begin();
-	// *it
-	std::cout << (*it).first << std::endl;
-	std::cout << it->first << std::endl;
-	// std::cout << (*it) << std::endl;
-	// V.push_back(m.begin()->first);
+	V.push_back((*it).first);
+	V.push_back(it->second);
+	++it;
+	V.push_back((*it).first);
+	V.push_back(it->second);
+	_map::iterator it2 = m.begin();
+	V.push_back(it == it2);
+	_map::iterator it3 = it;
+	V.push_back(it == it3);
+	it++;
+	V.push_back(it->second);
+	--it;
+
+	V.push_back(it->second);
+	it--;
+	V.push_back(it->second);
 
 	res.ft_end = timer();
 }
@@ -146,20 +160,137 @@ static void begin_test_s(std::vector<int> &V, struct s_time_res &res)
 
 	V.push_back(m.empty());
 	for (int i = 1; i < 1000; i++)
-		m[i] = i;
+		m[i] = i * 100;
 	V.push_back(m[50]);
 	V.push_back(m.empty());
 	V.push_back(m.size());
 	_map::iterator it = m.begin();
-	std::cout << (*it).first << std::endl;
-	std::cout << it->first << std::endl;
-
-	// V.push_back(m.begin()->first);
-
+	V.push_back((*it).first);
+	V.push_back(it->second);
+	++it;
+	V.push_back((*it).first);
+	V.push_back(it->second);
+	_map::iterator it2 = m.begin();
+	V.push_back(it == it2);
+	_map::iterator it3 = it;
+	V.push_back(it == it3);
+	it++;
+	V.push_back(it->second);
+	--it;
+	V.push_back(it->second);
+	it--;
+	V.push_back(it->second);
 
 	res.std_end = timer();
 }
 
+
+static void end_test_u(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef ft::Map<int, int> _map;
+	
+	res.ft_start = timer();
+	
+
+	_map m;
+
+	V.push_back(m.empty());
+	for (int i = 1; i < 10000; i++)
+		m[i] = i * 100;
+	V.push_back(m[50]);
+	V.push_back(m.empty());
+	V.push_back(m.size());
+	_map::iterator ite = m.end();
+	ite--;
+	V.push_back(ite->first);
+	V.push_back(ite->second);
+	--ite;
+	V.push_back(ite->first);
+	V.push_back(ite->second);
+
+	_map m2;
+	for (int i = 1; i < 5; i++)
+		m2[i] = i;
+	ite = m2.end();
+	_map::iterator it = m2.begin();
+	int ii = 10;
+	for (; it != ite && ii; it++, ii--)
+		std::cout << "ft: " << it->first << std::endl;
+
+	res.ft_end = timer();
+}
+
+static void end_test_s(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef std::map<int, int> _map;
+
+	res.std_start = timer();
+
+	_map m;
+	V.push_back(m.empty());
+	for (int i = 1; i < 10000; i++)
+		m[i] = i * 100;
+	V.push_back(m[50]);
+	V.push_back(m.empty());
+	V.push_back(m.size());
+	_map::iterator ite = m.end();
+	ite--;
+	V.push_back(ite->first);
+	V.push_back(ite->second);
+	--ite;
+	V.push_back(ite->first);
+	V.push_back(ite->second);
+
+
+	_map m2;
+	for (int i = 1; i < 5; i++)
+		m2[i] = i;
+	_map::iterator it = m2.begin();
+	ite = m2.end();
+	for (; it != ite; it++)
+		std::cout << "std: " << it->first << std::endl;
+
+	res.std_end = timer();
+}
+
+
+// static void rbegin_test_u(std::vector<int> &V, struct s_time_res &res)
+// {
+// 	typedef ft::Map<int, int> _map;
+	
+// 	res.ft_start = timer();
+	
+
+// 	_map m;
+
+// 	V.push_back(m.empty());
+// 	for (int i = 1; i < 10000; i++)
+// 		m[i] = i * 100;
+// 	_map::reverse_iterator itr;
+
+// 	itr = m.rbegin();
+// 	std::cout << itr->first << std::endl;
+
+
+// 	res.ft_end = timer();
+// }
+
+// static void rbegin_test_s(std::vector<int> &V, struct s_time_res &res)
+// {
+// 	typedef std::map<int, int> _map;
+
+// 	res.std_start = timer();
+
+// 	_map m;
+// 	V.push_back(m.empty());
+// 	for (int i = 1; i < 10000; i++)
+// 		m[i] = i * 100;
+// 	_map::reverse_iterator itr;
+// 	itr = m.rbegin();
+// 	std::cout << itr->first << std::endl;
+
+// 	res.std_end = timer();
+// }
 
 
 
@@ -199,5 +330,17 @@ void map_test(void)
 	print_res("Begin", s, u, t_res);
 	u.clear();
 	s.clear();
+
+	end_test_u(u, t_res);
+	end_test_s(s, t_res);
+	print_res("end", s, u, t_res);
+	u.clear();
+	s.clear();
+
+	// rbegin_test_u(u, t_res);
+	// rbegin_test_s(s, t_res);
+	// print_res("rbegin", s, u, t_res);
+	// u.clear();
+	// s.clear();
 
 }

@@ -15,6 +15,9 @@
 // #include "iterators/Iterator.hpp"
 // operator = in iterators
 
+// 	++it3;
+// *it = *it3; should not work
+
 int main(void)
 {
 	// vector_test();

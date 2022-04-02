@@ -74,13 +74,18 @@ class iterator_vector
 
 		iterator_vector operator- (difference_type n) const
 		{ return static_cast<iterator_vector>(current - n); }
+		
+		
 		iterator_vector& operator--() { --current; return *this; }
+		
 		iterator_vector  operator--(int i) {
 			(void) i;
 			iterator_vector tmp = *this;
 			--current;
 			return *this;
 		}
+
+
 		iterator_vector& operator-= (difference_type n) { current -= n; return *this; }
 		pointer operator->() const { return &(operator*()); }
 		reference operator[](difference_type n) const { return *(*this + n); }

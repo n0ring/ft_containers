@@ -20,19 +20,71 @@ struct node
 		node_type	*right;
 		node_type	*parrent;
 		pair_type	pair;
+		bool		isNil;
 	
-	node(node *nil) :  left(nil), right(nil), parrent(nil), pair()
+	node(node *nil) :  left(nil), right(nil), parrent(nil), pair(), isNil(false)
 	{
 	}
 
-	node(pair_type const &p, node *nil) :  left(nil), right(nil), parrent(nil), pair(p)
+	node(pair_type const &p, node *nil) :  left(nil), right(nil),
+		parrent(nil), pair(p), isNil(false)
 	{
 	}
 	
-	node(void) :  left(NULL), right(NULL), parrent(NULL), pair()
+	node(void) :  left(NULL), right(NULL), parrent(NULL), pair(), isNil(true)
 	{
 	}
 
+	node *subtree_first(node *locale_root)
+	{
+		node *tmp = locale_root;
+		while (tmp->left->isNil == false)
+			tmp = tmp->left;
+		return (tmp);
+	}
+
+	node *subtree_last(node *root)
+	{
+		node *tmp = root;
+		while (tmp->right->isNil == false)
+			tmp = tmp->right;
+		return (tmp);
+	}
+
+	node *successor(void)
+	{
+		node *n = this;
+		node *tmp = n;
+		if (n->right->isNil == false)
+			return (subtree_first(n->right));
+		else
+		{
+			while (tmp->parrent->left->isNil == false)
+				tmp = tmp->parrent;
+			return (tmp->parrent);
+		}
+	}
+
+	node *precessor()
+	{
+		node *n = this;
+		node *tmp = n;
+		if (n->left->isNil == false)
+			return (subtree_last(n->left));
+		if (n->parrent->right == n)
+			return (n->parrent);
+		while (tmp->parrent->right->isNil == false)
+			tmp = tmp->parrent;
+		return (tmp->parrent);
+	}
+	
+	node *subtree_last()
+	{
+		node *tmp = this;
+		while (tmp->right->isNil == false)
+			tmp = tmp->right;
+		return (tmp);
+	}
 
 	~node(void) {}
 };
@@ -79,6 +131,9 @@ public:
 		delete_tree(root);
 		// delete nil;
 	}
+
+
+	
 
 
 	node *get_root() { return root; }
@@ -285,6 +340,8 @@ public:
 		node *tmp = n;
 		if (n->left != nil)
 			return (subtree_last(n->left));
+		if (n->parrent->right == n)
+			return (n->parrent);		
 		while (tmp->parrent->right != nil)
 			tmp = tmp->parrent;
 		return (tmp->parrent);
