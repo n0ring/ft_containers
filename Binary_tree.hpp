@@ -10,7 +10,7 @@ struct node
 		typedef Key								key_type;
 		typedef Value							mapped_type;
 		typedef	node<key_type, mapped_type>		node_type;
-		typedef ft::Pair<key_type, mapped_type> pair_type;		
+		typedef ft::Pair<const key_type, mapped_type> pair_type;		
 		typedef pair_type&						reference_type;		
 		typedef pair_type*						pointer;		
 		
@@ -35,9 +35,20 @@ struct node
 	{
 	}
 
+	~node(void) {}
+
+
 	node *subtree_first(node *locale_root)
 	{
 		node *tmp = locale_root;
+		while (tmp->left->isNil == false)
+			tmp = tmp->left;
+		return (tmp);
+	}
+
+	node *subtree_first(void)
+	{
+		node *tmp = this;
 		while (tmp->left->isNil == false)
 			tmp = tmp->left;
 		return (tmp);
@@ -51,34 +62,7 @@ struct node
 		return (tmp);
 	}
 
-	node *successor(void)
-	{
-		node *n = this;
-		node *tmp = n;
-		if (n->right->isNil == false)
-			return (subtree_first(n->right));
-		else
-		{
-			while (tmp->parrent->left->isNil == false)
-				tmp = tmp->parrent;
-			return (tmp->parrent);
-		}
-	}
-
-	node *precessor()
-	{
-		node *n = this;
-		node *tmp = n;
-		if (n->left->isNil == false)
-			return (subtree_last(n->left));
-		if (n->parrent->right == n)
-			return (n->parrent);
-		while (tmp->parrent->right->isNil == false)
-			tmp = tmp->parrent;
-		return (tmp->parrent);
-	}
-	
-	node *subtree_last()
+	node *subtree_last(void)
 	{
 		node *tmp = this;
 		while (tmp->right->isNil == false)
@@ -86,7 +70,41 @@ struct node
 		return (tmp);
 	}
 
-	~node(void) {}
+
+	node *successor(void)
+	{
+		node	*tmp		= this;
+		node	*parrent	= tmp->parrent;
+
+		if (tmp->right->isNil == false)
+			return (subtree_first(tmp->right));
+		while (parrent->isNil == false && parrent->right == tmp)
+			{
+				tmp = parrent;
+				parrent = parrent->parrent;
+			}
+		return (parrent);
+	}
+
+	node *precessor()
+	{
+		node *tmp		= this;
+		node *parrent	= tmp->parrent;
+
+		if (tmp->left->isNil == false)
+			return (subtree_last(tmp->left));
+		if (tmp->parrent->right == tmp)
+			return (tmp->parrent);
+		
+		while (parrent->isNil == false && parrent->right != tmp)
+		{
+			tmp = parrent;
+			parrent = parrent->parrent;
+		}
+		return (tmp->parrent);
+	}
+
+
 };
 
 	template<typename Key, typename Value>
@@ -306,46 +324,21 @@ public:
 	// 	std::cout << tmp->pair->first << std::endl;	
 	// }
 
-	node *subtree_first(node *locale_root)
-	{
-		node *tmp = locale_root;
-		while (tmp->left != nil)
-			tmp = tmp->left;
-		return (tmp);
-	}
+	// node *subtree_first(node *locale_root)
+	// {
+	// 	node *tmp = locale_root;
+	// 	while (tmp->left != nil)
+	// 		tmp = tmp->left;
+	// 	return (tmp);
+	// }
 
-	node *subtree_last(node *root)
-	{
-		node *tmp = root;
-		while (tmp->right != nil)
-			tmp = tmp->right;
-		return (tmp);
-	}
-
-	node *successor(node *n)
-	{
-		node *tmp = n;
-		if (n->right)
-			return (subtree_first(n->right));
-		else
-		{
-			while (tmp->parrent->left != nil)
-				tmp = tmp->parrent;
-			return (tmp->parrent);
-		}
-	}
-
-	node *precessor(node *n)
-	{
-		node *tmp = n;
-		if (n->left != nil)
-			return (subtree_last(n->left));
-		if (n->parrent->right == n)
-			return (n->parrent);		
-		while (tmp->parrent->right != nil)
-			tmp = tmp->parrent;
-		return (tmp->parrent);
-	}
+	// node *subtree_last(node *root)
+	// {
+	// 	node *tmp = root;
+	// 	while (tmp->right != nil)
+	// 		tmp = tmp->right;
+	// 	return (tmp);
+	// }
 	
 	void delete_tree(node *root)
 	{
@@ -356,8 +349,6 @@ public:
 		delete root;
 	}
 
-
-
 	node* subtree_insert_after(node* subtree, node *new_el)
 	{
 		new_el->parrent = subtree;
@@ -365,7 +356,7 @@ public:
 		if (subtree->right == nil)
 			subtree->right = new_el;
 		else
-			successor(subtree)->left = new_el;
+			subtree->successor()->left = new_el;
 		return new_el;
 	}
 
@@ -379,7 +370,7 @@ public:
 		}
 		else
 		{
-			prec =  precessor(subtree);
+			prec = subtree->precessor();
 			prec->right = new_el;
 			new_el = prec;
 		}

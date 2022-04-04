@@ -15,8 +15,7 @@
 // #include "iterators/Iterator.hpp"
 // operator = in iterators
 
-// 	++it3;
-// *it = *it3; should not work
+// stack or heap??
 
 int main(void)
 {
@@ -24,7 +23,7 @@ int main(void)
 	// stack_test();
 	// pair_test();
 	map_test();
-
+	// std::cout << static_cast<int>("fdsgsadf") << std::endl;
 
 	// ft::Map<int, int> m;
 	// for (int i = 1; i < 10; i++)

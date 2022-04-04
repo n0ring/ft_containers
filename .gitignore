@@ -4,3 +4,4 @@ main
 *.o
 ft_containers
 main.dSYM/
+ft_containers-unit-test/

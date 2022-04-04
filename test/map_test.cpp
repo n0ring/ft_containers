@@ -209,13 +209,15 @@ static void end_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(ite->second);
 
 	_map m2;
-	for (int i = 1; i < 5; i++)
+	m2[5] = 5;
+	for (int i = 1; i < 10; i++)
 		m2[i] = i;
-	ite = m2.end();
 	_map::iterator it = m2.begin();
-	int ii = 10;
-	for (; it != ite && ii; it++, ii--)
-		std::cout << "ft: " << it->first << std::endl;
+	
+	ite = m2.end();
+	ite--;
+	for (; it != ite; ite--)
+		V.push_back(ite->first);
 
 	res.ft_end = timer();
 }
@@ -241,57 +243,150 @@ static void end_test_s(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(ite->first);
 	V.push_back(ite->second);
 
-
 	_map m2;
-	for (int i = 1; i < 5; i++)
+	m2[5] = 5;
+	for (int i = 1; i < 10; i++)
 		m2[i] = i;
 	_map::iterator it = m2.begin();
+	
 	ite = m2.end();
-	for (; it != ite; it++)
-		std::cout << "std: " << it->first << std::endl;
+	ite--;
+	for (; it != ite; ite--)
+		V.push_back(ite->first);
 
 	res.std_end = timer();
 }
 
 
-// static void rbegin_test_u(std::vector<int> &V, struct s_time_res &res)
+static void rbegin_test_u(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef ft::Map<int, int> _map;
+	
+	res.ft_start = timer();
+	
+
+	_map m;
+
+	V.push_back(m.empty());
+	m[5] = 5;
+	for (int i = 1; i < 100; i++)
+		m[i] = i * 100;
+	_map::reverse_iterator it = m.rbegin();
+	_map::reverse_iterator ite = m.rend();
+
+	for (; it != ite; it++)
+		V.push_back(it->first);
+
+
+
+	res.ft_end = timer();
+}
+
+static void rbegin_test_s(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef std::map<int, int> _map;
+
+	res.std_start = timer();
+
+	_map m;
+
+	V.push_back(m.empty());
+	m[5] = 5;
+	for (int i = 1; i < 100; i++)
+		m[i] = i * 100;
+	_map::reverse_iterator it = m.rbegin();
+	_map::reverse_iterator ite = m.rend();
+	for (; it != ite; it++)
+		V.push_back(it->first);
+	
+	res.std_end = timer();
+}
+
+
+
+// static void maxsize_test_u(std::vector<int> &V, struct s_time_res &res)
 // {
 // 	typedef ft::Map<int, int> _map;
 	
 // 	res.ft_start = timer();
-	
 
 // 	_map m;
 
 // 	V.push_back(m.empty());
-// 	for (int i = 1; i < 10000; i++)
+// 	V.push_back(m.max_size());
+// 	std::cout << m.max_size() << " ft "  << std::endl;
+// 	m[5] = 5;
+// 	for (int i = 1; i < 100; i++)
 // 		m[i] = i * 100;
-// 	_map::reverse_iterator itr;
-
-// 	itr = m.rbegin();
-// 	std::cout << itr->first << std::endl;
-
+// 	std::cout << m.max_size() << " ft "  << std::endl;
+// 	V.push_back(m.max_size());
 
 // 	res.ft_end = timer();
 // }
 
-// static void rbegin_test_s(std::vector<int> &V, struct s_time_res &res)
+
+// static void maxsize_test_s(std::vector<int> &V, struct s_time_res &res)
 // {
 // 	typedef std::map<int, int> _map;
 
 // 	res.std_start = timer();
 
 // 	_map m;
+
 // 	V.push_back(m.empty());
-// 	for (int i = 1; i < 10000; i++)
+// 	V.push_back(m.max_size());
+// 	std::cout << m.max_size() << " std " << std::endl;
+// 	m[5] = 5;
+// 	for (int i = 1; i < 100; i++)
 // 		m[i] = i * 100;
-// 	_map::reverse_iterator itr;
-// 	itr = m.rbegin();
-// 	std::cout << itr->first << std::endl;
+// 	std::cout << m.max_size() << " std " << std::endl;
+// 	V.push_back(m.max_size());
 
 // 	res.std_end = timer();
 // }
 
+
+static void insert_insert_test_u(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef ft::Map<int, int> _map;
+	
+	res.ft_start = timer();
+	
+
+	_map m;
+	V.push_back(m.empty());
+	ft::Pair<_map::iterator, bool> pair_res;
+	for (int i = 0; i < 10; i++)
+	{
+		pair_res = m.insert(ft::make_pair(i, i * 100));
+		std::cout << pair_res.first->first << std::endl;
+		// std::cout << pair_res.second << std::endl;
+	}
+	
+
+
+	res.ft_end = timer();
+}
+
+// static void insert_test_s(std::vector<int> &V, struct s_time_res &res)
+// {
+// 	typedef std::map<int, int> _map;
+
+// 	res.std_start = timer();
+
+// 	_map m;
+
+// 	V.push_back(m.empty());
+// 	m[5] = 5;
+// 	for (int i = 1; i < 100; i++)
+// 		m[i] = i * 100;
+// 	_map::reverse_iterator it = m.rbegin();
+// 	_map::reverse_iterator ite = m.rend();
+// 	for (; it != ite; it++)
+// 		V.push_back(it->first);
+	
+// 	res.std_end = timer();
+// }
 
 
 //----------------------------------------------------
@@ -337,10 +432,23 @@ void map_test(void)
 	u.clear();
 	s.clear();
 
-	// rbegin_test_u(u, t_res);
-	// rbegin_test_s(s, t_res);
+	rbegin_test_u(u, t_res);
+	rbegin_test_s(s, t_res);
+	print_res("rbegin", s, u, t_res);
+	u.clear();
+	s.clear();
+
+	// maxsize_test_u(u, t_res);
+	// maxsize_test_s(s, t_res);
+	// print_res("maxsize", s, u, t_res);
+	// u.clear();
+	// s.clear();
+
+	insert_insert_test_u(u, t_res);
+	// insert_test_s(s, t_res);
 	// print_res("rbegin", s, u, t_res);
 	// u.clear();
 	// s.clear();
+
 
 }

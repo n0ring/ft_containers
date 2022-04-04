@@ -95,7 +95,7 @@ class iterator_map
 
 
 		template <class Iterator>
-  		bool operator== (const iterator_map<Iterator>& lhs,
+		  bool operator== (const iterator_map<Iterator>& lhs,
 				const iterator_map<Iterator>& rhs) { return (lhs.base() == rhs.base()); }
 
 		template <class Iterator>
@@ -152,44 +152,47 @@ class reverse_iterator_map
 		reference operator*() const {  return (current->pair); }
 
 		reverse_iterator_map &operator++() { 
+			if (this->base()->isNil)
+			{
+				current = tree_root->subtree_last();
+				return *this;
+			}
+			current = current->precessor();
+			return *this;
+
+
+		}
+
+		reverse_iterator_map  operator++(int i) {
+			(void) i;
+			reverse_iterator_map tmp = *this;
+			if (this->base()->isNil)
+			{
+				current = tree_root->subtree_last();
+				return *this;
+			}
+			current = current->precessor();
+			return *this;
+
+		}
+
+		reverse_iterator_map &operator--() { 
 			current = current->successor();
 			return *this;
 		}
 
-		// reverse_iterator_map  operator++(int i) {
-		// 	(void) i;
-		// 	reverse_iterator_map tmp = *this;
-		// 	current = current->successor();
-		// 	return *this;
-		// }
-
-		// reverse_iterator_map &operator--() { 
-		// 	if (this->base()->isNil)
-		// 	{
-		// 		current = tree_root->subtree_last();
-		// 		return *this;
-		// 	}
-		// 	current = current->precessor();
-		// 	return *this;
-		// }
-
-		// reverse_iterator_map  operator--(int i) {
-		// 	(void) i;
-		// 	if (this->base()->isNil)
-		// 	{
-		// 		current = tree_root->subtree_last();
-		// 		return *this;
-		// 	}
-		// 	reverse_iterator_map tmp = *this;
-		// 	current = current->precessor();
-		// 	return *this;
-		// }
+		reverse_iterator_map  operator--(int i) {
+			(void) i;
+			reverse_iterator_map tmp = *this;
+			current = current->successor();
+			return *this;
+		}
 		pointer operator->() const { return &((operator*())) ; }
 };
 
 
 		template <class Iterator>
-  		bool operator== (const reverse_iterator_map<Iterator>& lhs,
+		  bool operator== (const reverse_iterator_map<Iterator>& lhs,
 				const reverse_iterator_map<Iterator>& rhs) { return (lhs.base() == rhs.base()); }
 
 		template <class Iterator>
@@ -215,7 +218,7 @@ class Map
 		typedef typename allocator_type::pointer				pointer;
 		typedef typename allocator_type::size_type				size_type;
 		typedef	Compare											key_compare;
-		typedef ft::Pair<Key, mapped_type> 						pair_type;	
+		typedef ft::Pair<Key, mapped_type> 						value_type;
 		typedef ft::iterator_map<node>							iterator;
 		typedef ft::reverse_iterator_map<node>					reverse_iterator;
 		typedef typename iterator::difference_type  			difference_type;
@@ -234,27 +237,26 @@ class Map
 			(void) comp;
 		}
 
-		iterator begin()
-		{
-			iterator it(_tree.subtree_first(_tree.root), _tree.root);
-			return (it);
-		}
+		// template <class InputIterator>
+		// Map(InputIterator first, InputIterator last,
+		// 	const key_compare& comp = key_compare(),
+		// 	const allocator_type& alloc = allocator_type()) : _alloc(alloc)
+		// {
+		// 	for (; first != last; first++)
+		// 		Map::operator[first->key] = first->second;
+		// }
 
-		reverse_iterator rbegin()
-		{
-			reverse_iterator it(_tree.root->subtree_last(), _tree.root);
-			return (it);
-		}
+		// map (const map& x);
 
-		iterator end()
-		{
-			iterator it(_tree.subtree_first(_tree.nil), _tree.root);
-			return (it);
-		}
+		iterator begin() {return iterator (_tree.root->subtree_first(), _tree.root);}
+		 reverse_iterator rbegin(){return reverse_iterator (_tree.root->subtree_last(), _tree.root);}
+		iterator end() {return iterator(_tree.nil, _tree.root);}
+		reverse_iterator rend() { return reverse_iterator(_tree.nil, _tree.root);}
 
 		size_type size(void) { return _size; }
-
 		bool empty() const { return  (_size > 0 ) ? false : true; }
+
+		size_type max_size() const { return _alloc.max_size(); }
 
 	mapped_type& operator[] (const key_type& k)
 	{
@@ -280,6 +282,32 @@ class Map
 			}
 		}
 		return (res->pair.second);
+	}
+
+	Pair<iterator,bool> insert (const value_type& val)
+	{
+		node *new_node;
+		node *res		= _tree.find(val.first);
+		if (res == _tree.nil)
+		{
+			_size++;
+			_tree.root = new node(val, _tree.nil);
+			return make_pair(begin(), true);
+		}
+		if (res->pair.first == val.first)
+			return (make_pair(iterator(res, _tree.root), false));
+		else
+		{
+			_size++;
+			new_node = new node(val, _tree.nil);
+			if (val.first < res->pair.first)
+				_tree.subtree_insert_before(res, new_node);
+			else
+				_tree.subtree_insert_after(res, new_node);
+			return (make_pair(iterator(new_node, _tree.root), true ));
+			
+		}
+		return make_pair(iterator(res, _tree.root), true);
 	}
 
 };
