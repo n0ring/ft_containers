@@ -79,10 +79,10 @@ struct node
 		if (tmp->right->isNil == false)
 			return (subtree_first(tmp->right));
 		while (parrent->isNil == false && parrent->right == tmp)
-			{
-				tmp = parrent;
-				parrent = parrent->parrent;
-			}
+		{
+			tmp = parrent;
+			parrent = parrent->parrent;
+		}
 		return (parrent);
 	}
 
@@ -128,7 +128,7 @@ public:
 		typedef node<T, M>					node;
 		typedef typename node::key_type		key_type;
 		typedef typename node::mapped_type	mapped_type;
-		typedef ft::Pair<key_type, mapped_type> pair_type;		
+		typedef ft::Pair<const key_type, mapped_type> pair_type;		
 
 		node *root;
 		node *nil;
@@ -379,24 +379,31 @@ public:
 
 	void subtree_delete(node *el)
 	{
-		if (el->right == nil && el->left == nil)
-		{
-			if (el->parrent && el->parrent->left == el)
-				el->parrent->left = NULL;
-			else if (el->parrent && el->parrent->right == el)
-				el->parrent->right = NULL;
-			delete el;
-		}
-		if (el->left)
-		{
-			swap(el, precessor(el));
-			subtree_delete(precessor(el));
-		}
-		else if (el->right)
-		{
-			swap(el, successor(el));
-			subtree_delete(successor(el));		
-		}
+
+		std::cout << el->pair.first << " " << el->right->isNil << std::endl; 
+		std::cout << el->successor()->pair.first << " " << el->successor()->right->isNil << std::endl;
+		this->swap(el, el->successor());
+		std::cout << el->pair.first << " " << el->right->isNil << std::endl; 
+		std::cout << el->successor()->pair.first << " " << el->successor()->right->isNil << std::endl;
+		// if (el->right == nil && el->left == nil)
+		// {
+		// 	if (el->parrent && el->parrent->left == el)
+		// 		el->parrent->left = nil;
+		// 	else if (el->parrent && el->parrent->right == el)
+		// 		el->parrent->right = nil;
+		// 	if (el->isNil == false)
+		// 		delete el;
+		// }
+		// if (el->left->isNil == false)
+		// {
+		// 	swap(el, el->precessor());
+		// 	subtree_delete(el->precessor());
+		// }
+		// else if (el->right->isNil == false)
+		// {
+		// 	swap(el, el->successor());
+		// 	subtree_delete(el->successor());		
+		// }
 	}
 
 	node *find(key_type n)
@@ -417,10 +424,13 @@ public:
 	}
 
 
-	void swap(node *to_del, node *to_swap)
+	void swap(node *a, node *b)
 	{
-		std::swap(to_del->pair->first, to_swap->pair->first);
-		std::swap(to_del->pair->second, to_swap->pair->second);
+		pair_type tmp(a->pair);
+		a->pair = pair_type(b->pair.first, b->pair.second); 
+		// a->pair = tmp;
+		(void) tmp;
+		// std::swap(a, b);
 	}
 	
 };

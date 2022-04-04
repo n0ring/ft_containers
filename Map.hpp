@@ -209,19 +209,22 @@ template < class Key,												// map::key_type
 class Map
 {
 
-	public:
-		typedef node<Key, T>									node;
-		typedef typename node::key_type							key_type;
-		typedef typename node::mapped_type						mapped_type;
-		typedef typename node::node_type						node_type;
-		typedef Alloc											allocator_type;
-		typedef typename allocator_type::pointer				pointer;
-		typedef typename allocator_type::size_type				size_type;
-		typedef	Compare											key_compare;
-		typedef ft::Pair<Key, mapped_type> 						value_type;
-		typedef ft::iterator_map<node>							iterator;
-		typedef ft::reverse_iterator_map<node>					reverse_iterator;
-		typedef typename iterator::difference_type  			difference_type;
+	public:	
+		typedef node<Key, T>										node;
+		typedef typename node::key_type								key_type;
+		typedef typename node::mapped_type							mapped_type;
+		typedef typename node::node_type							node_type;
+		typedef Alloc												allocator_type;
+		typedef typename allocator_type::pointer					pointer;
+		typedef typename allocator_type::size_type					size_type;
+		typedef	Compare												key_compare;
+		typedef ft::Pair<Key, mapped_type> 							value_type;
+		typedef ft::iterator_map<node>								iterator;
+		typedef ft::reverse_iterator_map<node>						reverse_iterator;
+		typedef typename iterator::difference_type  				difference_type;
+		typedef typename allocator_type::const_pointer				const_pointer;
+		typedef const_pointer										const_iterator;
+		typedef typename ft::reverse_iterator_map<const_iterator>	const_reverse_iterator;
 		// typedef Compare<Key>									Compare;
 
 	public:
@@ -237,21 +240,32 @@ class Map
 			(void) comp;
 		}
 
-		// template <class InputIterator>
-		// Map(InputIterator first, InputIterator last,
-		// 	const key_compare& comp = key_compare(),
-		// 	const allocator_type& alloc = allocator_type()) : _alloc(alloc)
-		// {
-		// 	for (; first != last; first++)
-		// 		Map::operator[first->key] = first->second;
-		// }
+		template <class InputIterator>
+		Map(InputIterator first, InputIterator last,
+			const key_compare& comp = key_compare(),
+			const allocator_type& alloc = allocator_type()) : _alloc(alloc), _size(0)
+		{
+			(void) comp;
+			for (; first != last; first++)
+				this->insert(*first);
+		}
 
-		// map (const map& x);
+		Map (Map<Key, T> & x) : _alloc(x._alloc), _size(0) // const? 
+		{
+			iterator first = x.begin();
+			iterator last = x.end();
+			for (; first != last; first++)
+				this->insert(*first);
+		}
 
 		iterator begin() {return iterator (_tree.root->subtree_first(), _tree.root);}
-		 reverse_iterator rbegin(){return reverse_iterator (_tree.root->subtree_last(), _tree.root);}
+		const_iterator begin() const {return iterator (_tree.root->subtree_first(), _tree.root);}
 		iterator end() {return iterator(_tree.nil, _tree.root);}
+		const_iterator end() const {return iterator(_tree.nil, _tree.root);}
+		reverse_iterator rbegin(){return reverse_iterator (_tree.root->subtree_last(), _tree.root);}
+		const_reverse_iterator rbegin() const {return reverse_iterator (_tree.root->subtree_last(), _tree.root);}
 		reverse_iterator rend() { return reverse_iterator(_tree.nil, _tree.root);}
+		const_reverse_iterator rend() const { return reverse_iterator(_tree.nil, _tree.root);}
 
 		size_type size(void) { return _size; }
 		bool empty() const { return  (_size > 0 ) ? false : true; }
@@ -308,6 +322,28 @@ class Map
 			
 		}
 		return make_pair(iterator(res, _tree.root), true);
+	}
+
+	// iterator insert (iterator position, const value_type& val) {} ??? 
+
+	template <class InputIterator>
+		void insert (InputIterator first, InputIterator last)
+	{
+		for (; first != last; first++)
+			this->insert(*first);
+	}
+
+	void erase (iterator position)
+	{
+		_tree.subtree_delete(position.base());
+	}
+  
+
+	void show()
+	{
+		iterator it = begin();
+		for (; it != end(); it++)
+			std::cout << it->first << " " << it->second << std::endl;
 	}
 
 };

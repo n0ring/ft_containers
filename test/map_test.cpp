@@ -16,12 +16,28 @@ static void construct_test_u(std::vector<int> &V, struct s_time_res &res)
 	
 	res.ft_start = timer();
 	_map m;
-	m[10] = 21;
-	m[10] = 42;
+	m[5] = 10;
+	for (int i = 0; i < 20; i++)
+		m[i] = i * 10;
+
 	V.push_back(m[10]);
 	V.push_back(m[11]);
 	V.push_back(m[15]);
 	V.push_back(m.size());
+
+	_map m2(m.begin(), m.end());
+	V.push_back(m[10]);
+	V.push_back(m[11]);
+	V.push_back(m[15]);
+	V.push_back(m.size());
+
+	_map m3(m2);
+	V.push_back(m3[10]);
+	V.push_back(m3[11]);
+	V.push_back(m3[15]);
+	V.push_back(m3.size());
+	
+	
 	
 	res.ft_end = timer();
 }
@@ -33,12 +49,28 @@ static void construct_test_s(std::vector<int> &V, struct s_time_res &res)
 	res.std_start = timer();
 
 	_map m;
-	m[10] = 21;
-	m[10] = 42;
+
+	m[5] = 10;
+	for (int i = 0; i < 20; i++)
+		m[i] = i * 10;
+
 	V.push_back(m[10]);
 	V.push_back(m[11]);
 	V.push_back(m[15]);
 	V.push_back(m.size());
+
+	_map m2(m.begin(), m.end());
+	V.push_back(m[10]);
+	V.push_back(m[11]);
+	V.push_back(m[15]);
+	V.push_back(m.size());
+
+	_map m3(m2);
+	V.push_back(m3[10]);
+	V.push_back(m3[11]);
+	V.push_back(m3[15]);
+	V.push_back(m3.size());
+
 	res.std_end = timer();
 }
 
@@ -355,35 +387,102 @@ static void insert_insert_test_u(std::vector<int> &V, struct s_time_res &res)
 
 	_map m;
 	V.push_back(m.empty());
-	ft::Pair<_map::iterator, bool> pair_res;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1000; i++)
+		m.insert(ft::make_pair(i, i * 100));
+
+	V.push_back(m.insert(ft::make_pair(100, 100)).second);
+	V.push_back(m.insert(ft::make_pair(1000000, 100000)).second);
+	V.push_back(m[99]);
+	
+	_map m2;
+	m2.insert(m.begin(), m.end());
+	V.push_back(m2.size());
+	V.push_back(m2[19]);
+	V.push_back(m2[99]);
+	V.push_back(m2[999]);
+
+
+	res.ft_end = timer();
+}
+
+static void insert_insert_test_s(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef std::map<int, int> _map;
+
+	res.std_start = timer();
+
+	_map m;
+	V.push_back(m.empty());
+	for (int i = 0; i < 1000; i++)
 	{
-		pair_res = m.insert(ft::make_pair(i, i * 100));
-		std::cout << pair_res.first->first << std::endl;
-		// std::cout << pair_res.second << std::endl;
+		m.insert(std::make_pair(i, i * 100));
 	}
+		// m.insert(std::make_pair(i, i * 100));
+
+	V.push_back(m.insert(std::make_pair(100, 100)).second);
+	V.push_back(m.insert(std::make_pair(1000000, 100000)).second);
+	V.push_back(m[99]);
+		_map m2;
+	
+	
+	m2.insert(m.begin(), m.end());
+	V.push_back(m2.size());
+	V.push_back(m2[19]);
+	V.push_back(m2[99]);
+	V.push_back(m2[999]);
+
+	
+	res.std_end = timer();
+}
+
+static void erase_test_u(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef ft::Map<int, int> _map;
+	
+	res.ft_start = timer();
+	
+
+	_map m;
+	V.push_back(m.empty());
+	for (int i = 1; i < 3; i++)
+		m.insert(ft::make_pair(i, i * 100));
+
+	// m.show();
+	m.erase( m.begin() );
+	std::cout << "-----" << std::endl;
+	// m.show();
 	
 
 
 	res.ft_end = timer();
 }
 
-// static void insert_test_s(std::vector<int> &V, struct s_time_res &res)
+// static void insert_insert_test_s(std::vector<int> &V, struct s_time_res &res)
 // {
 // 	typedef std::map<int, int> _map;
 
 // 	res.std_start = timer();
 
 // 	_map m;
-
 // 	V.push_back(m.empty());
-// 	m[5] = 5;
-// 	for (int i = 1; i < 100; i++)
-// 		m[i] = i * 100;
-// 	_map::reverse_iterator it = m.rbegin();
-// 	_map::reverse_iterator ite = m.rend();
-// 	for (; it != ite; it++)
-// 		V.push_back(it->first);
+// 	for (int i = 0; i < 1000; i++)
+// 	{
+// 		m.insert(std::make_pair(i, i * 100));
+// 	}
+// 		// m.insert(std::make_pair(i, i * 100));
+
+// 	V.push_back(m.insert(std::make_pair(100, 100)).second);
+// 	V.push_back(m.insert(std::make_pair(1000000, 100000)).second);
+// 	V.push_back(m[99]);
+// 		_map m2;
+	
+	
+// 	m2.insert(m.begin(), m.end());
+// 	V.push_back(m2.size());
+// 	V.push_back(m2[19]);
+// 	V.push_back(m2[99]);
+// 	V.push_back(m2[999]);
+
 	
 // 	res.std_end = timer();
 // }
@@ -445,10 +544,14 @@ void map_test(void)
 	// s.clear();
 
 	insert_insert_test_u(u, t_res);
-	// insert_test_s(s, t_res);
-	// print_res("rbegin", s, u, t_res);
+	insert_insert_test_s(s, t_res);
+	print_res("insert", s, u, t_res);
+	u.clear();
+	s.clear();
+
+	erase_test_u(u, t_res);
+	// insert_insert_test_s(s, t_res);
+	// print_res("insert", s, u, t_res);
 	// u.clear();
 	// s.clear();
-
-
 }

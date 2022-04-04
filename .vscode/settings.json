@@ -70,6 +70,7 @@
         "utility": "cpp",
         "filesystem": "cpp",
         "memory_resource": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "__functional_03": "cpp"
     }
 }
