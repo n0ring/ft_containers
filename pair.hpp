@@ -19,6 +19,10 @@ class Pair
 		Pair(void) : first(), second()
 		{
 		}
+		
+		~Pair(void)
+		{
+		}
 
 		template<class U, class V>
 		Pair (const Pair<U,V>& pr) : first(pr.first), second(pr.second)

@@ -5,3 +5,6 @@ main
 ft_containers
 main.dSYM/
 ft_containers-unit-test/
+.idea/
+CMakeLists.txt
+cmake-build-debug/
