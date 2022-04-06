@@ -19,8 +19,6 @@ class iterator_map
 	private:
 		T	*current;
 		T	*tree_root;
-
-		
 	
 	public:
 		typedef T													iterator_type;
@@ -66,7 +64,7 @@ class iterator_map
 			(void) i;
 			iterator_map tmp = *this;
 			current = current->successor();
-			return *this;
+			return tmp;
 		}
 
 		iterator_map &operator--() { 
@@ -88,7 +86,7 @@ class iterator_map
 			}
 			iterator_map tmp = *this;
 			current = current->precessor();
-			return *this;
+			return tmp;
 		}
 		pointer operator->() const { return &((operator*())) ; }
 };
@@ -173,20 +171,30 @@ class reverse_iterator_map
 				return *this;
 			}
 			current = current->precessor();
-			return *this;
+			return tmp;
 
 		}
 
-		reverse_iterator_map &operator--() { 
+		reverse_iterator_map &operator--() {
+			if (this->base()->isNil)
+			{
+				current = tree_root->subtree_first();
+				return *this;
+			}
 			current = current->successor();
 			return *this;
 		}
 
 		reverse_iterator_map  operator--(int i) {
 			(void) i;
+			if (this->base()->isNil)
+			{
+				current = tree_root->subtree_first();
+				return *this;
+			}
 			reverse_iterator_map tmp = *this;
 			current = current->successor();
-			return *this;
+			return tmp;
 		}
 		pointer operator->() const { return &((operator*())) ; }
 };
@@ -228,8 +236,8 @@ class Map
 	// template <class Key, class T, class Compare, class Alloc>
 	class value_compare : public std::binary_function<value_type, value_type, bool>
 	{
-		friend class Map;
-		protected:
+		// friend class Map;
+		public:
 			Compare comp;
 			value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
 			// value_compare (void) : comp() {}  // constructed with map's comparison object
@@ -295,7 +303,7 @@ class Map
 		if (res == _tree.nil)
 		{
 			_size++;
-			_tree.root = new node(make_pair(k, mapped_type() ), _tree.nil) ;
+			_tree.root = new node(ft::make_pair(k, mapped_type() ), _tree.nil) ;
 			return _tree.root->pair.second;
 		}
 		if (res->pair.first != k)
@@ -304,12 +312,12 @@ class Map
 			if (_comp(k, res->pair.first))
 			{
 				return (_tree.subtree_insert_before(res,
-					new node(make_pair(k, mapped_type()), _tree.nil)))->pair.second;
+					new node(ft::make_pair(k, mapped_type()), _tree.nil)))->pair.second;
 			}
 			else
 			{
 				return (_tree.subtree_insert_after(res,
-					new node(make_pair(k, mapped_type()), _tree.nil)))->pair.second;
+					new node(ft::make_pair(k, mapped_type()), _tree.nil)))->pair.second;
 			}
 		}
 		return (res->pair.second);
@@ -317,16 +325,17 @@ class Map
 
 	Pair<iterator,bool> insert (const value_type& val)
 	{
+
 		node *new_node;
 		node *res		= find(val.first).base();
 		if (res == _tree.nil)
 		{
 			_size++;
 			_tree.root = new node(val, _tree.nil);
-			return make_pair(begin(), true);
+			return ft::make_pair(begin(), true);
 		}
 		if (res->pair.first == val.first)
-			return (make_pair(iterator(res, _tree.root), false));
+			return (ft::make_pair(iterator(res, _tree.root), false));
 		else
 		{
 			_size++;
@@ -335,13 +344,21 @@ class Map
 				_tree.subtree_insert_before(res, new_node);
 			else
 				_tree.subtree_insert_after(res, new_node);
-			return (make_pair(iterator(new_node, _tree.root), true ));
+			return (ft::make_pair(iterator(new_node, _tree.root), true ));
 			
 		}
-		return make_pair(iterator(res, _tree.root), true);
+		return ft::make_pair(iterator(res, _tree.root), true);
 	}
 
-	// iterator insert (iterator position, const value_type& val) {} ??? 
+	iterator insert (iterator position, const value_type& val)
+	{
+		node		*successor = position.base()->successor();
+
+		if (val.first < successor->pair.first && val.first > position->first)
+			return iterator(_tree.subtree_insert_after(position.base(), new node(val, _tree.nil)), _tree.root);
+		else
+			return insert(val).first;
+	}
 
 	template <class InputIterator>
 		void insert (InputIterator first, InputIterator last)
@@ -392,12 +409,6 @@ class Map
 		_size = 0;
 	}
 
-	void swap (Map& x)
-	{
-		std::swap(x._tree.root, this->_tree.root);
-		std::swap(x._tree.nil, this->_tree.nil);
-	}
-
 	 iterator find(const key_type& k)
 	 {
 		node *tmp = _tree.root;
@@ -441,58 +452,54 @@ class Map
 			return (0);
 	}
 	
-	key_compare key_comp() const { return _alloc; }
+	key_compare key_comp() const { return _comp; }
 
 	iterator lower_bound (const key_type& k)
-	{	
-		node *tmp = _tree.root;
-		while (tmp->isNil == false)
+	{
+		iterator it = begin();
+		iterator ite = end();
+		for (; it != ite; it++)
 		{
-			if (_comp(tmp->pair.first, k))
-				tmp = tmp->successor();
-			else
-				return iterator(tmp, _tree.root);
+			if (!_comp(it->first, k))
+				return (it);
 		}
-		return (iterator(_tree.nil, _tree.root));
+		return (it);
 	}
 
 	const_iterator lower_bound (const key_type& k) const
 	{
-		node *tmp = _tree.root;
-		while (tmp->isNil == false)
+		iterator it = begin();
+		iterator ite = end();
+		for (; it != ite; it++)
 		{
-			if (_comp(tmp->pair.first, k))
-				tmp = tmp->successor();
-			else
-				return iterator(tmp, _tree.root);
+			if (!_comp(it->first, k))
+				return (it);
 		}
-		return (iterator(_tree.nil, _tree.root));
+		return (it);
 	}
 
 	iterator upper_bound (const key_type& k)
 	{
-		node *tmp = _tree.root;
-		while (tmp->isNil == false)
+		iterator it = begin();
+		iterator ite = end();
+		for (; it != ite; it++)
 		{
-			if (_comp(k, tmp->pair.first))
-				return iterator(tmp, _tree.root);
-			else
-				tmp = tmp->successor();
+			if (_comp(k, it->first))
+				return (it);
 		}
-		return (iterator(_tree.nil, _tree.root));
+		return (it);
 	}
 
 	const_iterator upper_bound (const key_type& k) const
 	{
-		node *tmp = _tree.root;
-		while (tmp->isNil == false)
+		iterator it = begin();
+		iterator ite = end();
+		for (; it != ite; it++)
 		{
-			if (_comp(k, tmp->pair.first))
-				return iterator(tmp, _tree.root);
-			else
-				tmp = tmp->successor();
+			if (_comp(k, it->first))
+				return (it);
 		}
-		return (iterator(_tree.nil, _tree.root));
+		return (it);
 	}
 
 	Pair<iterator,iterator> equal_range (const key_type& k)
@@ -505,15 +512,28 @@ class Map
 			else
 			{
 				if (tmp->pair.first == k)
-					return ( make_pair( iterator(tmp, _tree.root), ++(iterator(tmp, _tree.root))));
+					return ( ft::make_pair( iterator(tmp, _tree.root), ++(iterator(tmp, _tree.root))));
 				else
-					return ( make_pair( iterator(tmp, _tree.root), iterator(tmp, _tree.root)));
+					return ( ft::make_pair( iterator(tmp, _tree.root), iterator(tmp, _tree.root)));
 			}
 		}
-		return ( make_pair( iterator(tmp, _tree.root), iterator(tmp, _tree.root)));
+		return ( ft::make_pair( iterator(tmp, _tree.root), iterator(tmp, _tree.root)));
 	}
 
 	allocator_type get_allocator() const { return _alloc; }
+	
+	void swap (Map& x)
+	{
+		(void) x;
+		// std::swap(x._tree, this->_tree);
+		std::swap(x._tree.root, this->_tree.root);
+		std::swap(x._tree.nil, this->_tree.nil);
+
+		std::swap(x._alloc, this->_alloc);
+		std::swap(x._size, this->_size);
+		std::swap(x._comp, this->_comp);
+		std::swap(x._value_comp, this->_value_comp);
+	}
 
 };
 
@@ -523,7 +543,7 @@ class Map
 	{
 		if (lhs.size() != rhs.size())
 			return false;
-		return equal(lhs.begin(), lhs.end(), rhs.begin());
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 	}
 
 	template <class Key, class T, class Compare, class Alloc>
@@ -537,7 +557,7 @@ class Map
 	bool operator< ( const Map<Key,T,Compare,Alloc>& lhs,
 					const Map<Key,T,Compare,Alloc>& rhs )
 	{
-		return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <class Key, class T, class Compare, class Alloc>
@@ -563,4 +583,18 @@ class Map
 
 };
 
+namespace std
+{
+	template <class Key, class T, class Compare, class Alloc>
+	void swap (ft::Map<Key,T,Compare,Alloc>& x, ft::Map<Key,T,Compare,Alloc>& y)
+	{
+		std::swap(x._tree.root, y._tree.root);
+		std::swap(x._tree.nil, y._tree.nil);
+		
+		std::swap(x._alloc, y._alloc);
+		std::swap(x._size, y._size);
+		std::swap(x._comp, y._comp);
+		std::swap(x._value_comp, y._value_comp);
+	}
+}
 #endif // !MAP_HPP

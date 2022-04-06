@@ -10,7 +10,7 @@ struct node
 		typedef Key								key_type;
 		typedef Value							mapped_type;
 		typedef	node<key_type, mapped_type>		node_type;
-		typedef ft::Pair<const key_type, mapped_type> pair_type;		
+		typedef ft::Pair<key_type, mapped_type> pair_type;		
 		typedef pair_type&						reference_type;		
 		typedef pair_type*						pointer;		
 		
@@ -29,7 +29,6 @@ struct node
 	node(node const *other) :  left(other->left), right(other->right),
 		parrent(other->right), pair(other->pair), isNil(false)
 	{
-		std::cout << "here" << std::endl;
 	}
 
 	node(pair_type const &p, node *nil) :  left(nil), right(nil),
@@ -110,7 +109,6 @@ struct node
 		return (tmp->parrent);
 	}
 
-
 };
 
 	template<typename Key, typename Value>
@@ -128,13 +126,11 @@ struct node
 template<typename T, typename M>
 class Btree
 {
-
-
 public:
 		typedef node<T, M>					node;
 		typedef typename node::key_type		key_type;
 		typedef typename node::mapped_type	mapped_type;
-		typedef ft::Pair<key_type, mapped_type> pair_type;		
+		typedef ft::Pair<const key_type, mapped_type> pair_type;		
 
 		node *root;
 		node *nil;
@@ -231,7 +227,6 @@ public:
 			if (el->right->isNil == false)
 				el->right->parrent = successor_copy;
 			delete el;
-			
 		}
 		// case 3: only 1 child
 		else

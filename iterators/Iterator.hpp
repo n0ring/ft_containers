@@ -68,7 +68,7 @@ class iterator_vector
 			(void) i;
 			iterator_vector tmp = *this;
 			++current;
-			return *this;
+			return tmp;
 		}
 		iterator_vector& operator+= (difference_type n) { current += n; return *this; }
 
@@ -82,7 +82,7 @@ class iterator_vector
 			(void) i;
 			iterator_vector tmp = *this;
 			--current;
-			return *this;
+			return tmp;
 		}
 
 

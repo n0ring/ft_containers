@@ -329,7 +329,6 @@ static void rbegin_test_s(std::vector<int> &V, struct s_time_res &res)
 	_map::reverse_iterator ite = m.rend();
 	for (; it != ite; it++)
 		V.push_back(it->first);
-	
 	res.std_end = timer();
 }
 
@@ -400,6 +399,25 @@ static void insert_insert_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m2[99]);
 	V.push_back(m2[999]);
 
+	_map m3;
+	m3[7] = 7;
+	m3[3] = 3;
+	m3[2] = 2;
+	m3[4] = 4;
+	m3[6] = 6;
+	m3[11] = 11;
+	m3[9] = 9;
+	m3[18] = 18;
+	m3[14] = 14;
+	m3[12] = 12;
+	m3[17] = 17;
+    m3[22] = 22;
+    m3[19] = 19;
+    m3[20] = 20;
+
+	_map::iterator it = m3.find(12);
+	std::cout << it->first << std::endl;
+	m3.insert(it, ft::make_pair(13,13));
 
 	res.ft_end = timer();
 }
@@ -486,7 +504,7 @@ static void erase_test_u(std::vector<int> &V, struct s_time_res &res)
 	it = m2.begin();
 	for (; it != m2.end(); it++)
 		V.push_back(it->first);
-
+	
 
 
 	res.ft_end = timer();
@@ -604,7 +622,6 @@ static void swap_test_u(std::vector<int> &V, struct s_time_res &res)
 	for (; it != m2.end(); it++)
 		V.push_back(it->second);
 	
-
 	res.ft_end = timer();
 }
 
@@ -720,19 +737,29 @@ static void lower_bound_test_u(std::vector<int> &V, struct s_time_res &res)
 	
 	res.ft_start = timer();
 	
-	(void) V;
 	_map m;
-	for (int i = 1; i < 10000; i += 10)
+	for (int i = 1; i < 100; i += 10)
 		m.insert(ft::make_pair(i, i * 100));
 	V.push_back(m.lower_bound(1)->first);
 	V.push_back(m.lower_bound(15)->first);
 	V.push_back(m.lower_bound(11)->first);
 	V.push_back(m.lower_bound(10)->first);
-	V.push_back(m.lower_bound(9999) == m.end());
-	V.push_back(m.lower_bound(9991) == m.end());
+	V.push_back( m.lower_bound(9999) == m.end() );
+	V.push_back( m.lower_bound(9991) == m.end() );
 	
+	_map mp2;
 	
-
+    mp2.insert(ft::make_pair(20, 20));
+    mp2.insert(ft::make_pair(30, 30));
+    mp2.insert(ft::make_pair(40, 40));
+    mp2.insert(ft::make_pair(50, 50));
+    mp2.insert(ft::make_pair(60, 60));
+    _map::iterator it;
+    for (int i = 11; i < 70; i += 10) {
+        it = mp2.lower_bound(i);
+		if (it != mp2.end())
+	        V.push_back(it->first);
+    }
 
 	res.ft_end = timer();
 }
@@ -740,21 +767,33 @@ static void lower_bound_test_u(std::vector<int> &V, struct s_time_res &res)
 static void lower_bound_test_s(std::vector<int> &V, struct s_time_res &res)
 {
 	typedef std::map<int, int> _map;
-	(void) V;
 
 	res.std_start = timer();
 
 	_map m;
-	for (int i = 1; i < 10000; i += 10)
+	for (int i = 1; i < 100; i += 10)
 		m.insert(std::make_pair(i, i * 100));
 	V.push_back(m.lower_bound(1)->first);
 	V.push_back(m.lower_bound(15)->first);
 	V.push_back(m.lower_bound(11)->first);
 	V.push_back(m.lower_bound(10)->first);
-	V.push_back(m.lower_bound(9999) == m.end());
-	V.push_back(m.lower_bound(9991) == m.end());
-
-
+	V.push_back( m.lower_bound(9999) == m.end() );
+	V.push_back( m.lower_bound(9991) == m.end() );
+	
+	_map mp2;
+	
+    mp2.insert(std::make_pair(20, 20));
+    mp2.insert(std::make_pair(30, 30));
+    mp2.insert(std::make_pair(40, 40));
+    mp2.insert(std::make_pair(50, 50));
+    mp2.insert(std::make_pair(60, 60));
+    _map::iterator it;
+    for (int i = 11; i < 70; i += 10) {
+        it = mp2.lower_bound(i);
+		if (it != mp2.end())
+        	V.push_back(it->first);
+    }
+	
 	res.std_end = timer();
 }
 
@@ -774,9 +813,8 @@ static void upper_bound_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.upper_bound(10)->first);
 	V.push_back(m.upper_bound(9999) == m.end());
 	V.push_back(m.upper_bound(9991) == m.end());
+
 	
-
-
 	res.ft_end = timer();
 }
 
@@ -942,8 +980,6 @@ static void relational_operators_test_u(std::vector<int> &V, struct s_time_res &
 	V.push_back(m2 > m);
 	V.push_back(m2 >= m);
 
-
-
 	res.ft_end = timer();
 }
 
@@ -993,6 +1029,7 @@ static void relational_operators_test_s(std::vector<int> &V, struct s_time_res &
     m[19] = 19;
     m[20] = 20;
 
+
 	V.push_back(m2 == m);
 	V.push_back(m2 != m);
 	V.push_back(m2 < m);
@@ -1009,6 +1046,8 @@ static void relational_operators_test_s(std::vector<int> &V, struct s_time_res &
 	V.push_back(m2 <= m);
 	V.push_back(m2 > m);
 	V.push_back(m2 >= m);
+
+
 
 	res.std_end = timer();
 }
@@ -1130,4 +1169,7 @@ void map_test(void)
 	print_res("relational_operators", s, u, t_res);
 	u.clear();
 	s.clear();
+
+
+
 }
