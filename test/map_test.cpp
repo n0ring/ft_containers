@@ -731,6 +731,7 @@ static void lower_bound_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.lower_bound(9999) == m.end());
 	V.push_back(m.lower_bound(9991) == m.end());
 	
+	
 
 
 	res.ft_end = timer();
@@ -795,6 +796,219 @@ static void upper_bound_test_s(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.upper_bound(10)->first);
 	V.push_back(m.upper_bound(9999) == m.end());
 	V.push_back(m.upper_bound(9991) == m.end());
+
+	res.std_end = timer();
+}
+
+
+static void equal_range_test_u(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef ft::Map<int, int> _map;
+	
+	res.ft_start = timer();
+	
+	(void) V;
+	_map m2;
+	V.push_back(m2.equal_range(200).first == m2.end());
+	V.push_back(m2.equal_range(200).second == m2.end());
+	m2[7] = 7;
+	m2[3] = 3;
+	m2[2] = 2;
+	m2[4] = 4;
+	m2[6] = 6;
+	m2[11] = 11;
+	m2[9] = 9;
+	m2[18] = 18;
+	m2[14] = 14;
+	m2[12] = 12;
+	m2[17] = 17;
+    m2[22] = 22;
+    m2[19] = 19;
+    m2[20] = 20;
+
+	V.push_back(m2.equal_range(18).first->first);
+	V.push_back(m2.equal_range(18).second->first);
+
+	V.push_back(m2.equal_range(16).first->first);
+	V.push_back(m2.equal_range(16).second->first);
+	V.push_back(m2.equal_range(20).first->first);
+	V.push_back(m2.equal_range(20).second->first);
+	V.push_back(m2.equal_range(200).first == m2.end());
+	V.push_back(m2.equal_range(200).second == m2.end());
+
+
+
+	res.ft_end = timer();
+}
+
+static void equal_range_test_s(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef std::map<int, int> _map;
+	(void) V;
+
+	res.std_start = timer();
+
+	_map m2;
+	V.push_back(m2.equal_range(200).first == m2.end());
+	V.push_back(m2.equal_range(200).second == m2.end());
+	m2[7] = 7;
+	m2[3] = 3;
+	m2[2] = 2;
+	m2[4] = 4;
+	m2[6] = 6;
+	m2[11] = 11;
+	m2[9] = 9;
+	m2[18] = 18;
+	m2[14] = 14;
+	m2[12] = 12;
+	m2[17] = 17;
+    m2[22] = 22;
+    m2[19] = 19;
+    m2[20] = 20;
+
+	V.push_back(m2.equal_range(18).first->first);
+	V.push_back(m2.equal_range(18).second->first);
+
+	V.push_back(m2.equal_range(16).first->first);
+	V.push_back(m2.equal_range(16).second->first);
+	V.push_back(m2.equal_range(20).first->first);
+	V.push_back(m2.equal_range(20).second->first);
+	V.push_back(m2.equal_range(200).first == m2.end());
+	V.push_back(m2.equal_range(200).second == m2.end());
+
+	res.std_end = timer();
+}
+
+
+static void relational_operators_test_u(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef ft::Map<int, int> _map;
+	
+	res.ft_start = timer();
+	
+	_map m2;
+	_map m;
+
+	V.push_back(m2 == m);
+	V.push_back(m2 != m);
+	V.push_back(m2 < m);
+	V.push_back(m2 <= m);
+	V.push_back(m2 > m);
+	V.push_back(m2 >= m);
+	m2[7] = 7;
+	m2[3] = 3;
+	m2[2] = 2;
+	m2[4] = 4;
+	m2[6] = 6;
+	m2[11] = 11;
+	m2[9] = 9;
+	m2[18] = 18;
+	m2[14] = 14;
+	m2[12] = 12;
+	m2[17] = 17;
+    m2[22] = 22;
+    m2[19] = 19;
+    m2[20] = 20;
+
+	m[7] = 7;
+	m[3] = 3;
+	m[2] = 2;
+	m[4] = 4;
+	m[6] = 6;
+	m[11] = 11;
+	m[9] = 9;
+	m[18] = 18;
+	m[14] = 14;
+	m[12] = 12;
+	m[17] = 17;
+    m[22] = 22;
+    m[19] = 19;
+    m[20] = 20;
+
+	V.push_back(m2 == m);
+	V.push_back(m2 != m);
+	V.push_back(m2 < m);
+	V.push_back(m2 <= m);
+	V.push_back(m2 > m);
+	V.push_back(m2 >= m);
+
+
+	m[100] = 100000;
+
+	V.push_back(m2 == m);
+	V.push_back(m2 != m);
+	V.push_back(m2 < m);
+	V.push_back(m2 <= m);
+	V.push_back(m2 > m);
+	V.push_back(m2 >= m);
+
+
+
+	res.ft_end = timer();
+}
+
+static void relational_operators_test_s(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef std::map<int, int> _map;
+	(void) V;
+
+	res.std_start = timer();
+
+	_map m2;
+	_map m;
+
+	V.push_back(m2 == m);
+	V.push_back(m2 != m);
+	V.push_back(m2 < m);
+	V.push_back(m2 <= m);
+	V.push_back(m2 > m);
+	V.push_back(m2 >= m);
+	m2[7] = 7;
+	m2[3] = 3;
+	m2[2] = 2;
+	m2[4] = 4;
+	m2[6] = 6;
+	m2[11] = 11;
+	m2[9] = 9;
+	m2[18] = 18;
+	m2[14] = 14;
+	m2[12] = 12;
+	m2[17] = 17;
+    m2[22] = 22;
+    m2[19] = 19;
+    m2[20] = 20;
+
+	m[7] = 7;
+	m[3] = 3;
+	m[2] = 2;
+	m[4] = 4;
+	m[6] = 6;
+	m[11] = 11;
+	m[9] = 9;
+	m[18] = 18;
+	m[14] = 14;
+	m[12] = 12;
+	m[17] = 17;
+    m[22] = 22;
+    m[19] = 19;
+    m[20] = 20;
+
+	V.push_back(m2 == m);
+	V.push_back(m2 != m);
+	V.push_back(m2 < m);
+	V.push_back(m2 <= m);
+	V.push_back(m2 > m);
+	V.push_back(m2 >= m);
+
+
+	m[100] = 100000;
+
+	V.push_back(m2 == m);
+	V.push_back(m2 != m);
+	V.push_back(m2 < m);
+	V.push_back(m2 <= m);
+	V.push_back(m2 > m);
+	V.push_back(m2 >= m);
 
 	res.std_end = timer();
 }
@@ -902,6 +1116,18 @@ void map_test(void)
 	upper_bound_test_u(u, t_res);
 	upper_bound_test_s(s, t_res);
 	print_res("upper_bound", s, u, t_res);
+	u.clear();
+	s.clear();
+
+	equal_range_test_u(u, t_res);
+	equal_range_test_s(s, t_res);
+	print_res("equal_range", s, u, t_res);
+	u.clear();
+	s.clear();
+
+	relational_operators_test_u(u, t_res);
+	relational_operators_test_s(s, t_res);
+	print_res("relational_operators", s, u, t_res);
 	u.clear();
 	s.clear();
 }
