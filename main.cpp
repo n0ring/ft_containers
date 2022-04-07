@@ -81,7 +81,7 @@ int main(void)
 	// tree.iterate();
 	// tree.delete_element(5);
 
-	// std::cout << (tree.precessor(n))->key << std::endl;
+	// std::cout << (tree.predecessor(n))->key << std::endl;
 	// tree.show_tree(tree.get_root());
 
 	// tree.subtree_delete(n);

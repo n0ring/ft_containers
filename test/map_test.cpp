@@ -20,6 +20,11 @@ static void construct_test_u(std::vector<int> &V, struct s_time_res &res)
 	for (int i = 0; i < 20; i++)
 		m[i] = i * 10;
 
+	// _map mm;
+	// mm._tree.root = m._tree.clone_tree(m._tree.root, mm._tree.nil);
+
+
+
 	V.push_back(m[10]);
 	V.push_back(m[11]);
 	V.push_back(m[15]);
@@ -983,10 +988,9 @@ static void relational_operators_test_u(std::vector<int> &V, struct s_time_res &
 static void relational_operators_test_s(std::vector<int> &V, struct s_time_res &res)
 {
 	typedef std::map<int, int> _map;
-	(void) V;
-
+	
 	res.std_start = timer();
-
+	
 	_map m2;
 	_map m;
 
@@ -1026,7 +1030,6 @@ static void relational_operators_test_s(std::vector<int> &V, struct s_time_res &
     m[19] = 19;
     m[20] = 20;
 
-
 	V.push_back(m2 == m);
 	V.push_back(m2 != m);
 	V.push_back(m2 < m);
@@ -1044,6 +1047,94 @@ static void relational_operators_test_s(std::vector<int> &V, struct s_time_res &
 	V.push_back(m2 > m);
 	V.push_back(m2 >= m);
 
+	res.std_end = timer();
+}
+
+static void assignment_overload_test_u(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef ft::Map<int, int> _map;
+	(void) V;
+
+	res.ft_start = timer();
+
+	_map m2;
+	_map m;
+
+
+	m2[7] = 7;
+	m2[3] = 3;
+	m2[2] = 2;
+	m2[4] = 4;
+	m2[6] = 6;
+	m2[11] = 11;
+	m2[9] = 9;
+	m2[18] = 18;
+	m2[14] = 14;
+	m2[12] = 12;
+	m2[17] = 17;
+    m2[22] = 22;
+    m2[19] = 19;
+    m2[20] = 20;
+
+
+	m = m2;
+	_map::iterator it1 = m.begin();
+	_map::iterator it2 = m2.begin();
+
+	for (; it1 != m.end() && it2 != m2.end(); it1++, it2++)
+	{
+		std::cout << "m  " << it1->first << " - " << it1->second << std::endl; 
+		std::cout << "m2 " << it2->first << " - " << it2->second << std::endl; 
+	}
+	V.push_back(m2 == m);
+	V.push_back(m2 != m);
+	V.push_back(m2 < m);
+	V.push_back(m2 <= m);
+	V.push_back(m2 > m);
+	std::cout << "m2 end" << std::endl; 
+	V.push_back(m2 >= m);
+	std::cout << "m2 end" << std::endl; 
+
+
+	res.ft_end = timer();
+}
+
+
+static void assignment_overload_test_s(std::vector<int> &V, struct s_time_res &res)
+{
+	typedef std::map<int, int> _map;
+	(void) V;
+
+	res.std_start = timer();
+
+	_map m2;
+	_map m;
+
+
+	m2[7] = 7;
+	m2[3] = 3;
+	m2[2] = 2;
+	m2[4] = 4;
+	m2[6] = 6;
+	m2[11] = 11;
+	m2[9] = 9;
+	m2[18] = 18;
+	m2[14] = 14;
+	m2[12] = 12;
+	m2[17] = 17;
+    m2[22] = 22;
+    m2[19] = 19;
+    m2[20] = 20;
+
+	m = m2;
+
+
+	V.push_back(m2 == m);
+	V.push_back(m2 != m);
+	V.push_back(m2 < m);
+	V.push_back(m2 <= m);
+	V.push_back(m2 > m);
+	V.push_back(m2 >= m);
 
 	res.std_end = timer();
 }
@@ -1163,6 +1254,12 @@ void map_test(void)
 	relational_operators_test_u(u, t_res);
 	relational_operators_test_s(s, t_res);
 	print_res("relational_operators", s, u, t_res);
+	u.clear();
+	s.clear();
+
+	assignment_overload_test_u(u, t_res);
+	assignment_overload_test_s(s, t_res);
+	print_res("assignment_overload", s, u, t_res);
 	u.clear();
 	s.clear();
 

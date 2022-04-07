@@ -3,9 +3,6 @@
 
 #include <iterator>
 
-
-
-
 namespace ft
 {
 
@@ -33,8 +30,6 @@ class iterator_traits<T*>
     	typedef ptrdiff_t						difference_type;
     	typedef std::random_access_iterator_tag	iterator_category;
 };
-
-
 
 template<typename T>
 class iterator_vector
@@ -281,7 +276,7 @@ class iterator_map
 				current = tree_root->subtree_last();
 				return *this;
 			}
-			current = current->precessor();
+			current = current->predecessor();
 			return *this;
 		}
 
@@ -293,7 +288,7 @@ class iterator_map
 				return *this;
 			}
 			iterator_map tmp = *this;
-			current = current->precessor();
+			current = current->predecessor();
 			return tmp;
 		}
 		pointer operator->() const { return &((operator*())) ; }
@@ -362,7 +357,7 @@ class reverse_iterator_map
 				current = tree_root->subtree_last();
 				return *this;
 			}
-			current = current->precessor();
+			current = current->predecessor();
 			return *this;
 
 
@@ -376,7 +371,7 @@ class reverse_iterator_map
 				current = tree_root->subtree_last();
 				return *this;
 			}
-			current = current->precessor();
+			current = current->predecessor();
 			return tmp;
 
 		}

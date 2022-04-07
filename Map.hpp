@@ -36,7 +36,6 @@ class Map
 
 	class value_compare : public std::binary_function<value_type, value_type, bool>
 	{
-		// friend class Map;
 		public:
 			Compare comp;
 			value_compare (Compare c) : comp(c) {}
@@ -72,13 +71,21 @@ class Map
 			this->insert(first, last);
 		}
 
-		Map (Map<Key, T> const & x) : _tree(x._comp), _alloc(x._alloc),
+		Map (Map<Key, T> & x) : _tree(x._comp, x._tree._size), _alloc(x._alloc),
 			_comp(x._comp), _value_comp(x._value_comp) // const? 
 		{
-			this->insert(x.begin(), x.end());
+			_tree.root = x._tree.clone_tree(x._tree.root, _tree.nil);
 		}
 
-		iterator begin() {return iterator (_tree.subtree_first(_tree.root), _tree.root);}
+		Map &operator=(Map<Key, T> &x)
+		{
+			_tree.delete_tree(_tree.root);
+			_tree.root = x._tree.clone_tree(x._tree.root, _tree.nil);
+			_tree._size = x._tree._size;
+			return *this;
+		}
+
+		iterator begin() {return iterator (_tree.root->subtree_first(), _tree.root);}
 		const_iterator begin() const {return iterator (_tree.root->subtree_first(), _tree.root);}
 		iterator end() {return iterator(_tree.nil, _tree.root);}
 		const_iterator end() const {return iterator(_tree.nil, _tree.root);}
@@ -108,7 +115,7 @@ class Map
 
 		iterator insert (iterator position, const value_type& val)
 		{
-			node		*successor = _tree.successor(position.base());
+			node		*successor = position.base()->successor();
 
 			if (val.first < successor->pair.first && val.first > position->first)
 				return iterator(_tree.subtree_insert_after(position.base(), _tree.make_node(val)), _tree.root);
@@ -264,7 +271,7 @@ class Map
 			while (tmp->isNil == false)
 			{
 				if (_comp(tmp->pair.first, k))
-					tmp = _tree.successor(tmp);
+					tmp = tmp->successor();
 				else
 				{
 					if (tmp->pair.first == k)

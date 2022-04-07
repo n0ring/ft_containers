@@ -22,10 +22,6 @@ struct node
 		pair_type	pair;
 		bool		isNil;
 	
-	// node(node *nil) :  left(nil), right(nil), parrent(nil), pair(), isNil(false)
-	// {
-	// }
-
 	node(node const *other) :  left(other->left), right(other->right),
 		parrent(other->right), pair(other->pair), isNil(false)
 	{
@@ -91,7 +87,7 @@ struct node
 		return (parrent);
 	}
 
-	node *precessor()
+	node *predecessor()
 	{
 		node *tmp		= this;
 		node *parrent	= tmp->parrent;
@@ -109,18 +105,31 @@ struct node
 		return (tmp->parrent);
 	}
 
+
+
+
 };
 
 	template<typename Key, typename Value>
 	bool operator==(node<Key, Value> &a, node<Key, Value> &b)
 	{
-		return (a->pair.first == b->pair.first);
+		return (ft::equal(a->pair.first, b->pair.first) && ft::equal(a->pair.second, b->pair.second));
+	}
+
+	template<typename Key, typename Value>
+	bool operator!=(node<Key, Value> &a, node<Key, Value> &b)
+	{
+		return !(a == b);
 	}
 
 	template<typename Key, typename Value>
 	bool operator<(node<Key, Value> &a, node<Key, Value> &b)
 	{
-		return (a.pair.first < b.pair.first);
+		if (a.pair->first < b.pair.first)
+			return true;
+		if (a.pair->first == b.pair.first && a.pair->second < b.pair.second)
+			return true;
+		return false;
 	}
 
 template<typename T, typename M, typename Alloc, typename Compare = std::less<T> >
@@ -162,22 +171,19 @@ public:
 
 	// Btree(Btree const & other)
 	// {
-		
-
+	
 
 	// }
 
- 	void clone_tree(node *root, Btree new_tree)
-    {
-        if (root == nil)
-            return ;
-		if (root->left->isNil)
-        	new_tree.subtree_insert_before(new_tree, new_tree.nil);
-		else
-	        new_tree.subtree_insert_before(new_tree,   root->left);
-		clone_tree(root->left, new_tree->left);
-        new_tree.subtree_insert_after(new_tree, root->right);
-        clone_tree(root->right, new_tree->right);
+
+ 	node *clone_tree(node *root, node *nil)
+    {	
+        if (root->isNil)
+			return (nil);
+		node *new_el = make_node(*root);
+		new_el->left = clone_tree(root->left, nil);
+		new_el->right = clone_tree(root->right, nil);
+		return new_el;
     }
 
 	node *insert_element(const key_type& k) // insert by key
@@ -247,7 +253,7 @@ public:
 		_alloc.deallocate(to_del, sizeof(node));
 	}
 
-	pointer make_node(const node node_type = node())
+	pointer make_node(const node node_type = node()) 
 	{
 		node * new_node = _alloc.allocate(1);
 		_alloc.construct(new_node, node_type);
@@ -291,7 +297,7 @@ public:
 		}
 		else
 		{
-			prec = subtree->precessor();
+			prec = subtree->predecessor();
 			prec->right = new_el;
 			new_el = prec;
 		}
@@ -353,29 +359,6 @@ public:
             }
 			delete_node(el);
 		}
-	}
-
-	node *successor(node *subtree)
-	{
-		node	*tmp		= subtree;
-		node	*parrent	= tmp->parrent;
-
-		if (tmp->right->isNil == false)
-			return (subtree_first(tmp->right));
-		while (parrent->isNil == false && parrent->right == tmp)
-		{
-			tmp = parrent;
-			parrent = parrent->parrent;
-		}
-		return (parrent);
-	}
-
-	node *subtree_first(node * subtree)
-	{
-		node *tmp = subtree;
-		while (tmp->left->isNil == false)
-			tmp = tmp->left;
-		return (tmp);
 	}
 };
 
