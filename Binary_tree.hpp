@@ -123,23 +123,31 @@ struct node
 		return (a.pair.first < b.pair.first);
 	}
 
-template<typename T, typename M>
+template<typename T, typename M, typename Alloc, typename Compare = std::less<T> >
 class Btree
 {
 public:
 		typedef node<T, M>					node;
 		typedef typename node::key_type		key_type;
 		typedef typename node::mapped_type	mapped_type;
-		typedef ft::Pair<const key_type, mapped_type> pair_type;		
-
-		node *root;
-		node *nil;
+		typedef ft::Pair<const key_type, mapped_type> value_type;		
+		typedef Alloc												allocator_type;
+		typedef typename allocator_type::pointer					pointer;
+		typedef typename allocator_type::size_type					size_type;
+		typedef	Compare												key_compare;
+		// typedef ft::Pair<const Key, mapped_type> 					value_type;
+		
+		pointer 	root;
+		pointer 	nil;
+		Alloc		_alloc;
+		key_compare _comp;
+		size_type 	_size;
 
 public:
 
-	Btree(void)
+	Btree(const key_compare& comp = key_compare(), size_type size = 0) : _comp(comp), _size(size)
 	{
-		nil = new node();
+		nil = make_node();
 		nil->left = nil;
 		nil->right = nil;
 		nil->parrent = nil;
@@ -149,19 +157,117 @@ public:
 	~Btree()
 	{
 		delete_tree(root);
-		delete nil;
+		delete_node(nil);
+	}
+
+	// Btree(Btree const & other)
+	// {
+		
+
+
+	// }
+
+ 	void clone_tree(node *root, Btree new_tree)
+    {
+        if (root == nil)
+            return ;
+		if (root->left->isNil)
+        	new_tree.subtree_insert_before(new_tree, new_tree.nil);
+		else
+	        new_tree.subtree_insert_before(new_tree,   root->left);
+		clone_tree(root->left, new_tree->left);
+        new_tree.subtree_insert_after(new_tree, root->right);
+        clone_tree(root->right, new_tree->right);
+    }
+
+	node *insert_element(const key_type& k) // insert by key
+	{
+		node *new_node;
+		node *subtree 	= find(k);
+
+		if (subtree->isNil == false && subtree->pair.first == k)
+			return subtree;
+		new_node = make_node(ft::make_pair(k, mapped_type()));	
+		_size++;
+		if (subtree == nil)
+		{
+			root = new_node;
+			return (new_node);
+		}
+		if (_comp(new_node->pair.first, subtree->pair.first))
+			return subtree_insert_before(subtree, new_node);
+		else
+			return subtree_insert_after(subtree, new_node);
+	}
+
+
+	node *insert_element(const value_type& val) // insert pair
+	{
+		node *new_node;
+		node *subtree 	= find(val.first);
+
+		if (subtree->isNil == false && subtree->pair.first == val.first)
+			return subtree;
+		new_node = make_node(val);	
+		_size++;
+		if (subtree == nil)
+		{
+			root = new_node;
+			return (new_node);
+		}
+		if (_comp(new_node->pair.first, subtree->pair.first))
+			return subtree_insert_before(subtree, new_node);
+		else
+			return subtree_insert_after(subtree, new_node);
+	}
+
+	node *find(const key_type &value)
+	{
+		node *tmp = root;
+		node *tmp_p = nil;
+
+		while (tmp != nil)
+		{
+			if (tmp->pair.first == value)
+				return tmp;
+			tmp_p = tmp;
+			if (_comp(value, tmp->pair.first))
+				tmp = tmp->left;
+			else
+				tmp = tmp->right;
+		}
+		return (tmp_p);
 	}
 
 	node *get_root() { return root; }
 
-	
+	void delete_node(node * to_del)
+	{
+		_alloc.destroy(to_del);
+		_alloc.deallocate(to_del, sizeof(node));
+	}
+
+	pointer make_node(const node node_type = node())
+	{
+		node * new_node = _alloc.allocate(1);
+		_alloc.construct(new_node, node_type);
+		return (new_node);
+	}
+
+	pointer make_node(value_type const &p)
+	{
+		node *new_node = _alloc.allocate(1);
+		_alloc.construct(new_node, node(p, nil));
+		return (new_node);
+	}
+
 	void delete_tree(node *root)
 	{
 		if (root == nil)
 			return ;
 		delete_tree(root->left);
 		delete_tree(root->right);
-		delete root;
+		delete_node(root);
 	}
 
 	node* subtree_insert_after(node* subtree, node *new_el)
@@ -207,13 +313,13 @@ public:
 			}
 			else
 				root = nil;
-			delete el;
+			delete_node(el);
 		}
 		// case 2: two child
 		else if (el->right->isNil == false && el->left->isNil == false)
 		{
 			node * successor = el->successor();
-			node * successor_copy = new node(successor);
+			node * successor_copy = make_node(successor);
 			subtree_delete(successor);
 			successor_copy->right = el->right;
 			successor_copy->left = el->left;
@@ -226,7 +332,7 @@ public:
 				el->left->parrent = successor_copy;
 			if (el->right->isNil == false)
 				el->right->parrent = successor_copy;
-			delete el;
+			delete_node(el);
 		}
 		// case 3: only 1 child
 		else
@@ -245,8 +351,31 @@ public:
                 root = child;
                 child->parrent = nil;
             }
-			delete el;
+			delete_node(el);
 		}
+	}
+
+	node *successor(node *subtree)
+	{
+		node	*tmp		= subtree;
+		node	*parrent	= tmp->parrent;
+
+		if (tmp->right->isNil == false)
+			return (subtree_first(tmp->right));
+		while (parrent->isNil == false && parrent->right == tmp)
+		{
+			tmp = parrent;
+			parrent = parrent->parrent;
+		}
+		return (parrent);
+	}
+
+	node *subtree_first(node * subtree)
+	{
+		node *tmp = subtree;
+		while (tmp->left->isNil == false)
+			tmp = tmp->left;
+		return (tmp);
 	}
 };
 

@@ -19,11 +19,11 @@ static void construct_test_u(std::vector<int> &V, struct s_time_res &res)
 	m[5] = 10;
 	for (int i = 0; i < 20; i++)
 		m[i] = i * 10;
+
 	V.push_back(m[10]);
 	V.push_back(m[11]);
 	V.push_back(m[15]);
 	V.push_back(m.size());
-
 	_map m2(m.begin(), m.end());
 	V.push_back(m[10]);
 	V.push_back(m[11]);
@@ -36,8 +36,7 @@ static void construct_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m3[15]);
 	V.push_back(m3.size());
 	
-	
-	
+
 	res.ft_end = timer();
 }
 
@@ -48,7 +47,6 @@ static void construct_test_s(std::vector<int> &V, struct s_time_res &res)
 	res.std_start = timer();
 
 	_map m;
-
 	m[5] = 10;
 	for (int i = 0; i < 20; i++)
 		m[i] = i * 10;
@@ -57,7 +55,6 @@ static void construct_test_s(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m[11]);
 	V.push_back(m[15]);
 	V.push_back(m.size());
-
 	_map m2(m.begin(), m.end());
 	V.push_back(m[10]);
 	V.push_back(m[11]);
@@ -416,7 +413,7 @@ static void insert_insert_test_u(std::vector<int> &V, struct s_time_res &res)
     m3[20] = 20;
 
 	_map::iterator it = m3.find(12);
-	std::cout << it->first << std::endl;
+
 	m3.insert(it, ft::make_pair(13,13));
 
 	res.ft_end = timer();
@@ -1048,7 +1045,6 @@ static void relational_operators_test_s(std::vector<int> &V, struct s_time_res &
 	V.push_back(m2 >= m);
 
 
-
 	res.std_end = timer();
 }
 
@@ -1169,7 +1165,6 @@ void map_test(void)
 	print_res("relational_operators", s, u, t_res);
 	u.clear();
 	s.clear();
-
 
 
 }
