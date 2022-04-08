@@ -23,8 +23,6 @@ static void construct_test_u(std::vector<int> &V, struct s_time_res &res)
 	// _map mm;
 	// mm._tree.root = m._tree.clone_tree(m._tree.root, mm._tree.nil);
 
-
-
 	V.push_back(m[10]);
 	V.push_back(m[11]);
 	V.push_back(m[15]);
@@ -40,6 +38,13 @@ static void construct_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m3[11]);
 	V.push_back(m3[15]);
 	V.push_back(m3.size());
+	V.push_back(m3 == m2);
+	V.push_back(m3 != m2);
+	V.push_back(m3 <= m2);
+	V.push_back(m3 < m2);
+	V.push_back(m3 > m2);
+	V.push_back(m3 >= m2);
+
 	
 
 	res.ft_end = timer();
@@ -71,7 +76,12 @@ static void construct_test_s(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m3[11]);
 	V.push_back(m3[15]);
 	V.push_back(m3.size());
-
+	V.push_back(m3 == m2);
+	V.push_back(m3 != m2);
+	V.push_back(m3 <= m2);
+	V.push_back(m3 < m2);
+	V.push_back(m3 > m2);
+	V.push_back(m3 >= m2);
 	res.std_end = timer();
 }
 
@@ -928,7 +938,6 @@ static void relational_operators_test_u(std::vector<int> &V, struct s_time_res &
 	
 	_map m2;
 	_map m;
-
 	V.push_back(m2 == m);
 	V.push_back(m2 != m);
 	V.push_back(m2 < m);
@@ -1076,25 +1085,16 @@ static void assignment_overload_test_u(std::vector<int> &V, struct s_time_res &r
     m2[19] = 19;
     m2[20] = 20;
 
+	// m2.begin()->first = 99;
 
 	m = m2;
-	_map::iterator it1 = m.begin();
-	_map::iterator it2 = m2.begin();
 
-	for (; it1 != m.end() && it2 != m2.end(); it1++, it2++)
-	{
-		std::cout << "m  " << it1->first << " - " << it1->second << std::endl; 
-		std::cout << "m2 " << it2->first << " - " << it2->second << std::endl; 
-	}
 	V.push_back(m2 == m);
 	V.push_back(m2 != m);
 	V.push_back(m2 < m);
 	V.push_back(m2 <= m);
 	V.push_back(m2 > m);
-	std::cout << "m2 end" << std::endl; 
 	V.push_back(m2 >= m);
-	std::cout << "m2 end" << std::endl; 
-
 
 	res.ft_end = timer();
 }
@@ -1136,6 +1136,8 @@ static void assignment_overload_test_s(std::vector<int> &V, struct s_time_res &r
 	V.push_back(m2 > m);
 	V.push_back(m2 >= m);
 
+
+
 	res.std_end = timer();
 }
 
@@ -1148,7 +1150,7 @@ void map_test(void)
 	struct s_time_res	t_res;
 
 	std::cout << "********************************************************************" << std::endl;
-	std::cout << "********************************MAP*********************************" << std::endl;
+	std::cout << "->                              MAP                               <-" << std::endl;
 	std::cout << "********************************************************************" << std::endl;
 
 	print_header();

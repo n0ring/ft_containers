@@ -50,7 +50,7 @@ class Map
 	};
 
 	public:
-		Btree<Key, T, Alloc, key_compare>	_tree;
+		BStree<Key, T, Alloc, key_compare>	_tree;
 		allocator_type	_alloc;
 		key_compare		_comp;
 		value_compare	_value_comp;
@@ -74,14 +74,12 @@ class Map
 		Map (Map<Key, T> & x) : _tree(x._comp, x._tree._size), _alloc(x._alloc),
 			_comp(x._comp), _value_comp(x._value_comp) // const? 
 		{
-			_tree.root = x._tree.clone_tree(x._tree.root, _tree.nil);
+			_tree = x._tree;
 		}
 
 		Map &operator=(Map<Key, T> &x)
 		{
-			_tree.delete_tree(_tree.root);
-			_tree.root = x._tree.clone_tree(x._tree.root, _tree.nil);
-			_tree._size = x._tree._size;
+			_tree = x._tree;
 			return *this;
 		}
 
@@ -174,36 +172,12 @@ class Map
 
 		 iterator find(const key_type& k)
 		 {
-			node *tmp = _tree.root;
-			node *tmp_p = _tree.nil;
-			while (tmp != _tree.nil)
-			{
-				tmp_p = tmp;
-				if (tmp->pair.first == k)
-					return iterator(tmp, _tree.root);
-				if (_comp(k, tmp->pair.first))
-					tmp = tmp->left;
-				else
-					tmp = tmp->right;
-			}
-			return iterator(tmp_p, _tree.root);
+			return iterator(_tree.find(k), _tree.root);
 		 }
 
 		const_iterator find (const key_type& k) const
 		 {
-			node *tmp = _tree.root;
-			node *tmp_p = _tree.nil;
-			while (tmp != _tree.nil)
-			{
-				tmp_p = tmp;
-				if (tmp->pair.first == k)
-					return iterator(tmp, _tree.root);
-				if (_comp(k, tmp->pair.first))
-					tmp = tmp->left;
-				else
-					tmp = tmp->right;
-			}
-			return iterator(tmp_p, _tree.root);
+			return iterator(_tree.find(k), _tree.root);
 		}
 
 		size_type count (const key_type& k) const
@@ -342,7 +316,7 @@ class Map
 	bool operator>= ( const Map<Key,T,Compare,Alloc>& lhs,
 					const Map<Key,T,Compare,Alloc>& rhs )
 	{
-		return (rhs < lhs || rhs == lhs);
+		return (rhs < lhs || lhs == rhs);
 	}	
 
 };

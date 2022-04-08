@@ -10,7 +10,7 @@ struct node
 		typedef Key								key_type;
 		typedef Value							mapped_type;
 		typedef	node<key_type, mapped_type>		node_type;
-		typedef ft::Pair<key_type, mapped_type> pair_type;		
+		typedef ft::Pair<const key_type, mapped_type> pair_type;		
 		typedef pair_type&						reference_type;		
 		typedef pair_type*						pointer;		
 		
@@ -34,6 +34,19 @@ struct node
 	
 	node(void) :  left(NULL), right(NULL), parrent(NULL), pair(), isNil(true)
 	{
+	}
+
+	node &operator=(node const &other)
+	{
+		if (this != &other)
+		{
+			left = other.left;
+			right = other.right;
+			parrent = other.parrent;
+			pair = other->pair;
+			isNil = other->isNil;
+		}
+		return *this;
 	}
 
 	~node(void) {}
@@ -105,9 +118,6 @@ struct node
 		return (tmp->parrent);
 	}
 
-
-
-
 };
 
 	template<typename Key, typename Value>
@@ -132,8 +142,26 @@ struct node
 		return false;
 	}
 
+	template<typename Key, typename Value>
+	bool operator<=(node<Key, Value> &a, node<Key, Value> &b)
+	{
+		return (a < b || a == b);
+	}
+
+	template<typename Key, typename Value>
+	bool operator>(node<Key, Value> &a, node<Key, Value> &b)
+	{
+		return (b < a);
+	}
+
+	template<typename Key, typename Value>
+	bool operator>=(node<Key, Value> &a, node<Key, Value> &b)
+	{
+		return (b < a || b == a);
+	}
+
 template<typename T, typename M, typename Alloc, typename Compare = std::less<T> >
-class Btree
+class BStree
 {
 public:
 		typedef node<T, M>					node;
@@ -154,7 +182,7 @@ public:
 
 public:
 
-	Btree(const key_compare& comp = key_compare(), size_type size = 0) : _comp(comp), _size(size)
+	BStree(const key_compare& comp = key_compare(), size_type size = 0) : _comp(comp), _size(size)
 	{
 		nil = make_node();
 		nil->left = nil;
@@ -163,26 +191,42 @@ public:
 		root = nil;
 	}
 
-	~Btree()
+	~BStree()
 	{
 		delete_tree(root);
 		delete_node(nil);
 	}
 
-	// Btree(Btree const & other)
+	// BStree(BStree const & other)
 	// {
 	
 
 	// }
 
+	BStree &operator=(BStree &other)
+	{
+		if (this != &other)
+		{
+			delete_tree(root);
+			root = nil;
+			root = other.clone_tree(other.root, root, nil);
+			_size = other._size;
+			_alloc = other._alloc;
+			_comp = other._comp;
+		}
+		return (*this);
 
- 	node *clone_tree(node *root, node *nil)
+	}
+
+
+ 	node *clone_tree(node *root, node *parrent, node *nil)
     {	
         if (root->isNil)
 			return (nil);
 		node *new_el = make_node(*root);
-		new_el->left = clone_tree(root->left, nil);
-		new_el->right = clone_tree(root->right, nil);
+		new_el->parrent = parrent;
+		new_el->left = clone_tree(root->left, new_el, nil);
+		new_el->right = clone_tree(root->right, new_el, nil);
 		return new_el;
     }
 
@@ -227,7 +271,7 @@ public:
 			return subtree_insert_after(subtree, new_node);
 	}
 
-	node *find(const key_type &value)
+	node *find(const key_type &value) const
 	{
 		node *tmp = root;
 		node *tmp_p = nil;

@@ -297,7 +297,7 @@ class iterator_map
 
 		template <class Iterator>
 		  bool operator== (const iterator_map<Iterator>& lhs,
-				const iterator_map<Iterator>& rhs) { return (lhs.base() == rhs.base()); }
+				const iterator_map<Iterator>& rhs) { return (lhs.base() == rhs.base() ); }
 
 		template <class Iterator>
 		bool operator!= (const iterator_map<Iterator>& lhs,
