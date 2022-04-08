@@ -22,17 +22,17 @@ struct node
 		pair_type	pair;
 		bool		isNil;
 	
-	node(node const *other) :  left(other->left), right(other->right),
+	node(node const *other) : left(other->left), right(other->right),
 		parrent(other->right), pair(other->pair), isNil(false)
 	{
 	}
 
-	node(pair_type const &p, node *nil) :  left(nil), right(nil),
+	node(pair_type const &p, node *nil) : left(nil), right(nil),
 		parrent(nil), pair(p), isNil(false)
 	{
 	}
 	
-	node(void) :  left(NULL), right(NULL), parrent(NULL), pair(), isNil(true)
+	node(void) : left(NULL), right(NULL), parrent(NULL), pair(), isNil(true)
 	{
 	}
 
@@ -218,57 +218,13 @@ public:
 
 	}
 
-
- 	node *clone_tree(node *root, node *parrent, node *nil)
-    {	
-        if (root->isNil)
-			return (nil);
-		node *new_el = make_node(*root);
-		new_el->parrent = parrent;
-		new_el->left = clone_tree(root->left, new_el, nil);
-		new_el->right = clone_tree(root->right, new_el, nil);
-		return new_el;
-    }
-
-	node *insert_element(const key_type& k) // insert by key
+	int subtree_size(node *subtree)
 	{
-		node *new_node;
-		node *subtree 	= find(k);
-
-		if (subtree->isNil == false && subtree->pair.first == k)
-			return subtree;
-		new_node = make_node(ft::make_pair(k, mapped_type()));	
-		_size++;
 		if (subtree == nil)
-		{
-			root = new_node;
-			return (new_node);
-		}
-		if (_comp(new_node->pair.first, subtree->pair.first))
-			return subtree_insert_before(subtree, new_node);
-		else
-			return subtree_insert_after(subtree, new_node);
-	}
-
-
-	node *insert_element(const value_type& val) // insert pair
-	{
-		node *new_node;
-		node *subtree 	= find(val.first);
-
-		if (subtree->isNil == false && subtree->pair.first == val.first)
-			return subtree;
-		new_node = make_node(val);	
-		_size++;
-		if (subtree == nil)
-		{
-			root = new_node;
-			return (new_node);
-		}
-		if (_comp(new_node->pair.first, subtree->pair.first))
-			return subtree_insert_before(subtree, new_node);
-		else
-			return subtree_insert_after(subtree, new_node);
+			return 0;
+		if (subtree->left == nil && subtree->right == nil)
+			return 1;
+		return (subtree_size(subtree->left) + subtree_size(subtree->right) + 1);
 	}
 
 	node *find(const key_type &value) const
@@ -320,6 +276,81 @@ public:
 		delete_node(root);
 	}
 
+
+ 	node *clone_tree(node *root, node *parrent, node *nil)
+    {	
+        if (root->isNil)
+			return (nil);
+		node *new_el = make_node(*root);
+		new_el->parrent = parrent;
+		new_el->left = clone_tree(root->left, new_el, nil);
+		new_el->right = clone_tree(root->right, new_el, nil);
+		return new_el;
+    }
+
+	node *insert_element(const key_type& k) // insert by key
+	{
+		node *new_node;
+		node *subtree 	= find(k);
+		
+std::cout << "added " << k << std::endl;
+		if (subtree->isNil == false && subtree->pair.first == k)
+			return subtree;
+		new_node = make_node(ft::make_pair(k, mapped_type()));	
+		_size++;
+		if (subtree == nil)
+		{
+			root = new_node;
+			return (new_node);
+		}
+		if (_comp(new_node->pair.first, subtree->pair.first))
+			return subtree_insert_before(subtree, new_node);
+		else
+			return subtree_insert_after(subtree, new_node);
+	}
+
+	node *insert_element(const value_type& val) // insert pair
+	{
+		node *new_node;
+		node *subtree 	= find(val.first);
+		if (subtree->isNil == false && subtree->pair.first == val.first)
+			return subtree;
+		new_node = make_node(val);	
+		_size++;
+		if (subtree == nil)
+		{
+			root = new_node;
+			return (new_node);
+		}
+		if (_comp(new_node->pair.first, subtree->pair.first))
+			return subtree_insert_before(subtree, new_node);
+		else
+			return subtree_insert_after(subtree, new_node);
+	}
+
+	int subtree_height(node *subtree)
+	{
+		if (subtree->left == nil && subtree->right == nil)
+			return 0;
+		int h_left = subtree_height(subtree->left);
+		int h_right = subtree_height(subtree->right);
+		return (h_left > h_right ? h_left + 1 : h_right + 1);
+	}
+
+	bool isSubtreeBalanced(node *subtree)
+	{
+		if (subtree->isNil)
+			return true;
+		int h_left = subtree_height(subtree->left) + 1;
+		int h_right = subtree_height(subtree->right) + 1;
+		// int skew = subtree_height(subtree->right) - subtree_height(subtree->left);
+		int skew = h_right - h_left;
+		if (skew > 1 || skew < -1)
+			return false;
+		else
+			return true;
+	}
+
 	node* subtree_insert_after(node* subtree, node *new_el)
 	{
 		new_el->parrent = subtree;
@@ -328,6 +359,10 @@ public:
 			subtree->right = new_el;
 		else
 			subtree->successor()->left = new_el;
+		if (isSubtreeBalanced(subtree->parrent))
+			std::cout << "--perfect balance " << std::endl;
+		else
+			std::cout << "--chaos " << std::endl;
 		return new_el;
 	}
 
@@ -345,6 +380,10 @@ public:
 			prec->right = new_el;
 			new_el = prec;
 		}
+		if (isSubtreeBalanced(subtree->parrent))
+			std::cout << "--perfect balance " << std::endl;
+		else
+			std::cout << "--chaos " << std::endl;
 		return new_el;
 	}
 

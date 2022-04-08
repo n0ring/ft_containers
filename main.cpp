@@ -22,76 +22,25 @@ int main(void)
 	// vector_test();
 	// stack_test();
 	// pair_test();
-	map_test();
-	// std::cout << static_cast<int>("fdsgsadf") << std::endl;
+	// map_test();
 
-	// ft::Map<int, int> m;
-	// for (int i = 1; i < 10; i++)
-	// 	m[i] = i;
-	// ft::Map<int, int>::iterator it = m.begin();
-	// std::cout << it->first << std::endl;
-	// it->first = 99;
+	ft::Map<int, int> m2;
+	m2[7] = 7;
+	m2[3] = 3;
+	m2[2] = 2;
+	m2[4] = 4;
+	m2[6] = 6;
+	m2[11] = 11;
+	m2[9] = 9;
+	// m2[18] = 18;
+	// m2[14] = 14;
+	// m2[12] = 12;
+	// m2[17] = 17;
+    // m2[22] = 22;
+    // m2[19] = 19;
+    // m2[20] = 20;
 
-
-	// node<int, int>  *end = m._tree.subtree_last(m._tree.root);
-	// for (; tmp != end; tmp = m._tree.successor(tmp))
-	// 	std::cout << tmp->pair.first << std::endl;
-	// std::cout << tmp->pair.first << std::endl;
-	
-	
-	// std::map<int, int> m;
-	// m[1] = 1;
-	// m[2] = 2;
-	// m[3] = 3;
-	// std::map<int, int>::iterator it = m.begin();
-	// std::cout << it->first << std::endl;
-	// it++;
-	// std::cout << it->first << std::endl;
-
-
-
-
-
-	// std::map<int, int> std_map;
-	// std::map<int, int>::iterator it_s =  std_map.begin();
-	// std::cout << it_s->second << std::endl;
-	
-
-	
-	// Btree<int, int>	tree;
-
-	// tree.insert_element(new ft::Pair<int, int>(10, 10));
-	// tree.insert_element(new ft::Pair<int, int>(5, 5));
-	// tree.insert_element(new ft::Pair<int, int>(4, 4));
-	// tree.insert_element(new ft::Pair<int, int>(3, 3));
-	// tree.insert_element(new ft::Pair<int, int>(7, 7));
-	// tree.insert_element(new ft::Pair<int, int>(15, 15));
-	// tree.insert_element(new ft::Pair<int, int>(13, 13));
-	// tree.insert_element(new ft::Pair<int, int>(11, 11));
-	// tree.insert_element(new ft::Pair<int, int>(14, 14));
-	// tree.insert_element(new ft::Pair<int, int>(21, 21));
-	
-	// tree.delete_element(13);
-	
-	// tree.subtree_delete(tree.find(21));
-	// tree.show_tree(tree.root);
-
-
-
-	// tree.iterate();
-	// tree.delete_element(5);
-
-	// std::cout << (tree.predecessor(n))->key << std::endl;
-	// tree.show_tree(tree.get_root());
-
-	// tree.subtree_delete(n);
-	// std::cout << "-----" << std::endl;
-
-	// tree.show_tree(tree.get_root());
-	// std::cout << "-----" << std::endl;
-	// tree.iterate();
-	// std::cout << "-----" << std::endl;
-	// tree.reverse_iterate();
+	std::cout << m2._tree.subtree_height(m2._tree.find(9)) << std::endl;
 
 
 	return (0);
