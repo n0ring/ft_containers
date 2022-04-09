@@ -92,7 +92,6 @@ static void insert_test_u(std::vector<int> &V, struct s_time_res &res)
 	res.ft_start = timer();
 	
 	_map m;
-	m[5000] = 5000000;
 	for (int i = 0; i < 10000; i++)
 		m[i] = i;
 	V.push_back(m[10]);
@@ -111,7 +110,6 @@ static void insert_test_s(std::vector<int> &V, struct s_time_res &res)
 	res.std_start = timer();
 
 	_map m;
-	m[5000] = 5000000;
 	for (int i = 0; i < 10000; i++)
 		m[i] = i;
 	V.push_back(m[10]);
@@ -483,39 +481,39 @@ static void erase_test_u(std::vector<int> &V, struct s_time_res &res)
 	it++;
 	it++;
 	m.erase( it );
-	V.push_back(m.size());
-	it = m.begin();
-	for (; it != m.end(); it++)
-		V.push_back(it->first);
-	m.erase(6);
-	m.erase(7);
-	for (; it != m.end(); it++)
-		V.push_back(it->first);
+//	V.push_back(m.size());
+//	it = m.begin();
+//	for (; it != m.end(); it++)
+//		V.push_back(it->first);
+//	m.erase(6);
+//	m.erase(7);
+//	for (; it != m.end(); it++)
+//		V.push_back(it->first);
+//
+//	it = m.begin();
+//	it++;
+//	it++;
+//	it++;
+//	m.erase(m.begin(), it);
+//
+//	for (; it != m.end(); it++)
+//		V.push_back(it->first);
+//	V.push_back(m.size());
 
-	it = m.begin();
-	it++;
-	it++;
-	it++;
-	m.erase(m.begin(), it);
-
-	for (; it != m.end(); it++)
-		V.push_back(it->first);
-	V.push_back(m.size());
-
-	_map m2;
-	m2[7] = 7;
-	m2[11] = 11;
-	m2[9] = 9;
-	m2[18] = 18;
-	m2[14] = 14;
-	m2[22] = 22;
-	m2[19] = 19;
-	m2[20] = 20;
-	it = m2.begin();
-	m2.erase(7);
-	it = m2.begin();
-	for (; it != m2.end(); it++)
-		V.push_back(it->first);
+//	_map m2;
+//	m2[7] = 7;
+//	m2[11] = 11;
+//	m2[9] = 9;
+//	m2[18] = 18;
+//	m2[14] = 14;
+//	m2[22] = 22;
+//	m2[19] = 19;
+//	m2[20] = 20;
+//	it = m2.begin();
+//	m2.erase(7);
+//	it = m2.begin();
+//	for (; it != m2.end(); it++)
+//		V.push_back(it->first);
 	
 
 

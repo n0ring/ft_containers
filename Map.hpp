@@ -17,7 +17,6 @@ template < class Key,												// map::key_type
 >
 class Map
 {
-
 	public:	
 		typedef node<Key, T>										node;
 		typedef typename node::key_type								key_type;

@@ -22,16 +22,17 @@ int main(void)
 	// vector_test();
 	// stack_test();
 	// pair_test();
-	// map_test();
+	map_test();
 
-	ft::Map<int, int> m2;
-	m2[7] = 7;
-	m2[3] = 3;
-	m2[2] = 2;
-	m2[4] = 4;
-	m2[6] = 6;
-	m2[11] = 11;
-	m2[9] = 9;
+	// ft::Map<int, int> m2;
+	// m2[7] = 7;
+	// m2[3] = 3;
+	// m2[2] = 2;
+	// m2[4] = 4;
+	// m2[6] = 6;
+	// m2[11] = 11;
+	// m2[12] = 12;
+	// m2[9] = 9;
 	// m2[18] = 18;
 	// m2[14] = 14;
 	// m2[12] = 12;
@@ -40,7 +41,7 @@ int main(void)
     // m2[19] = 19;
     // m2[20] = 20;
 
-	std::cout << m2._tree.subtree_height(m2._tree.find(9)) << std::endl;
+	// std::cout << m2._tree.subtree_height(m2._tree.find(9)) << std::endl;
 
 
 	return (0);

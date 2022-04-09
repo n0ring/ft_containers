@@ -14,25 +14,24 @@ struct node
 		typedef pair_type&						reference_type;		
 		typedef pair_type*						pointer;		
 		
-		// key_type	key;
-		// mapped_type	value;
 		node_type	*left;
 		node_type	*right;
 		node_type	*parrent;
 		pair_type	pair;
 		bool		isNil;
+		int			height;
 	
 	node(node const *other) : left(other->left), right(other->right),
-		parrent(other->right), pair(other->pair), isNil(false)
+		parrent(other->right), pair(other->pair), isNil(false), height(other->height)
 	{
 	}
 
 	node(pair_type const &p, node *nil) : left(nil), right(nil),
-		parrent(nil), pair(p), isNil(false)
+		parrent(nil), pair(p), isNil(false), height(0)
 	{
 	}
 	
-	node(void) : left(NULL), right(NULL), parrent(NULL), pair(), isNil(true)
+	node(void) : left(NULL), right(NULL), parrent(NULL), pair(), isNil(true), height(0)
 	{
 	}
 
@@ -215,7 +214,6 @@ public:
 			_comp = other._comp;
 		}
 		return (*this);
-
 	}
 
 	int subtree_size(node *subtree)
@@ -276,7 +274,6 @@ public:
 		delete_node(root);
 	}
 
-
  	node *clone_tree(node *root, node *parrent, node *nil)
     {	
         if (root->isNil)
@@ -293,7 +290,6 @@ public:
 		node *new_node;
 		node *subtree 	= find(k);
 		
-std::cout << "added " << k << std::endl;
 		if (subtree->isNil == false && subtree->pair.first == k)
 			return subtree;
 		new_node = make_node(ft::make_pair(k, mapped_type()));	
@@ -328,27 +324,115 @@ std::cout << "added " << k << std::endl;
 			return subtree_insert_after(subtree, new_node);
 	}
 
+	void left_rotate(node *x)
+	{
+		if (x->right == nil)
+			return ;
+		node *y = x->right;
+		x->right = y->left;
+
+		if (y->left != nil)
+			y->left->parrent = x;
+		y->parrent = x->parrent;
+		if (x->parrent == nil)
+			root = y;
+		else if (x == x->parrent->left)
+			x->parrent->left = y;
+		else
+			x->parrent->right = y;
+		y->left = x;
+		x->parrent = y;
+        update_subtree_props(x);
+	}
+
+	void right_rotate(node *x)
+	{
+        if (x->left == nil)
+			return ;
+		node *y = x->left;
+		x->left = y->right;
+
+		if (y->right != nil)
+			y->right->parrent = x;
+		y->parrent = x->parrent;
+		if (x->parrent == nil)
+			root = y;
+		else if (x == x->parrent->left)
+			x->parrent->left = y;
+		else
+			x->parrent->right = y;
+		y->right = x;
+		x->parrent = y;
+        update_subtree_props(x);
+    }
+
+	void update_subtree_props(node *leaf) // go up to root and update height of every node
+	{
+		node	*tmp = leaf;
+
+		while (tmp->isNil == false)
+		{
+			tmp->height = std::max(tmp->left->height, tmp->right->height) + 1;
+			tmp = tmp->parrent;
+		}
+	}
+
 	int subtree_height(node *subtree)
 	{
-		if (subtree->left == nil && subtree->right == nil)
+		if (subtree->left->isNil && subtree->right->isNil)
 			return 0;
 		int h_left = subtree_height(subtree->left);
 		int h_right = subtree_height(subtree->right);
-		return (h_left > h_right ? h_left + 1 : h_right + 1);
+		return std::max(h_left, h_right) + 1;
 	}
 
-	bool isSubtreeBalanced(node *subtree)
+    void rotate(node *y)
+    {
+        node	*x;
+        node	*parrent_tmp = y->parrent;
+
+        if (y->left->height > y->right->height)
+            x = y->left;
+        else
+            x = y->right;
+        if (x->isNil || y->isNil)
+            return ;
+        if (y->parrent->left == y && x == y->left)
+            right_rotate(y->parrent);
+        else if (y->parrent->left == y && x == y->right)
+        {
+            left_rotate(y);
+            right_rotate(parrent_tmp);
+        }
+        else if (y == y->parrent->right && x == y->right)
+            left_rotate(parrent_tmp);
+        else if (y == y->parrent->right && x == y->left)
+        {
+            right_rotate(y);
+            left_rotate(parrent_tmp);
+        }
+    }
+
+	void maintainBalance(node *subtree)
 	{
-		if (subtree->isNil)
-			return true;
-		int h_left = subtree_height(subtree->left) + 1;
-		int h_right = subtree_height(subtree->right) + 1;
-		// int skew = subtree_height(subtree->right) - subtree_height(subtree->left);
-		int skew = h_right - h_left;
-		if (skew > 1 || skew < -1)
-			return false;
-		else
-			return true;
+		node	*subtree_to_check = subtree;
+		int		skew;
+
+		while (subtree_to_check->isNil == false)
+		{
+			skew = subtree_to_check->right->height - subtree_to_check->left->height;
+			if (skew > 1)
+            {
+				rotate(subtree_to_check->right);
+				return ;
+			}
+			else if (skew < -1)
+            {
+				rotate(subtree_to_check->left);
+				return ;
+			}
+			subtree_to_check = subtree_to_check->parrent;
+		}
 	}
 
 	node* subtree_insert_after(node* subtree, node *new_el)
@@ -359,10 +443,8 @@ std::cout << "added " << k << std::endl;
 			subtree->right = new_el;
 		else
 			subtree->successor()->left = new_el;
-		if (isSubtreeBalanced(subtree->parrent))
-			std::cout << "--perfect balance " << std::endl;
-		else
-			std::cout << "--chaos " << std::endl;
+		update_subtree_props(new_el);
+		maintainBalance(subtree);
 		return new_el;
 	}
 
@@ -380,10 +462,8 @@ std::cout << "added " << k << std::endl;
 			prec->right = new_el;
 			new_el = prec;
 		}
-		if (isSubtreeBalanced(subtree->parrent))
-			std::cout << "--perfect balance " << std::endl;
-		else
-			std::cout << "--chaos " << std::endl;
+		update_subtree_props(new_el);
+		maintainBalance(subtree);
 		return new_el;
 	}
 
@@ -442,7 +522,7 @@ std::cout << "added " << k << std::endl;
             }
 			delete_node(el);
 		}
-	}
+		update_subtree_props(parrent);
 };
 
 
