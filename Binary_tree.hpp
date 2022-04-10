@@ -372,7 +372,10 @@ public:
 
 		while (tmp->isNil == false)
 		{
-			tmp->height = std::max(tmp->left->height, tmp->right->height) + 1;
+			if (tmp->right->isNil && tmp->left->isNil)
+				tmp->height = 0;
+			else
+				tmp->height = std::max(tmp->left->height, tmp->right->height) + 1;
 			tmp = tmp->parrent;
 		}
 	}
@@ -424,7 +427,7 @@ public:
 			if (skew > 1)
             {
 				rotate(subtree_to_check->right);
-				return ;
+				return ; // need to stop?? test without
 			}
 			else if (skew < -1)
             {
@@ -501,6 +504,8 @@ public:
 				el->left->parrent = successor_copy;
 			if (el->right->isNil == false)
 				el->right->parrent = successor_copy;
+			if (root == el)
+				root = successor_copy;
 			delete_node(el);
 		}
 		// case 3: only 1 child
@@ -523,6 +528,7 @@ public:
 			delete_node(el);
 		}
 		update_subtree_props(parrent);
+	}
 };
 
 

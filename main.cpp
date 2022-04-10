@@ -19,9 +19,9 @@
 
 int main(void)
 {
-	// vector_test();
-	// stack_test();
-	// pair_test();
+	vector_test();
+	stack_test();
+	pair_test();
 	map_test();
 
 	// ft::Map<int, int> m2;
@@ -48,4 +48,11 @@ int main(void)
 }
 
 
-// test adding in random order 
+/*
+1. upper bound tooo slow
+2. make node. allocator and so on.
+3. typedefs in map chaos 
+3. try catch in stack vector map 
+4. range errors 
+
+*/

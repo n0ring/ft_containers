@@ -471,7 +471,6 @@ static void erase_test_u(std::vector<int> &V, struct s_time_res &res)
 
 	_map m;
 	V.push_back(m.empty());
-	m[5] = 5;
 	for (int i = 1; i < 10; i++)
 		m.insert(ft::make_pair(i, i * 100));
 
@@ -481,39 +480,39 @@ static void erase_test_u(std::vector<int> &V, struct s_time_res &res)
 	it++;
 	it++;
 	m.erase( it );
-//	V.push_back(m.size());
-//	it = m.begin();
-//	for (; it != m.end(); it++)
-//		V.push_back(it->first);
-//	m.erase(6);
-//	m.erase(7);
-//	for (; it != m.end(); it++)
-//		V.push_back(it->first);
-//
-//	it = m.begin();
-//	it++;
-//	it++;
-//	it++;
-//	m.erase(m.begin(), it);
-//
-//	for (; it != m.end(); it++)
-//		V.push_back(it->first);
-//	V.push_back(m.size());
+	V.push_back(m.size());
+	it = m.begin();
+	for (; it != m.end(); it++)
+		V.push_back(it->first);
+	m.erase(6);
+	m.erase(7);
+	for (; it != m.end(); it++)
+		V.push_back(it->first);
 
-//	_map m2;
-//	m2[7] = 7;
-//	m2[11] = 11;
-//	m2[9] = 9;
-//	m2[18] = 18;
-//	m2[14] = 14;
-//	m2[22] = 22;
-//	m2[19] = 19;
-//	m2[20] = 20;
-//	it = m2.begin();
-//	m2.erase(7);
-//	it = m2.begin();
-//	for (; it != m2.end(); it++)
-//		V.push_back(it->first);
+	it = m.begin();
+	it++;
+	it++;
+	it++;
+	m.erase(m.begin(), it);
+
+	for (; it != m.end(); it++)
+		V.push_back(it->first);
+	V.push_back(m.size());
+
+	_map m2;
+	m2[7] = 7;
+	m2[11] = 11;
+	m2[9] = 9;
+	m2[18] = 18;
+	m2[14] = 14;
+	m2[22] = 22;
+	m2[19] = 19;
+	m2[20] = 20;
+	it = m2.begin();
+	m2.erase(7);
+	it = m2.begin();
+	for (; it != m2.end(); it++)
+		V.push_back(it->first);
 	
 
 
@@ -754,9 +753,10 @@ static void lower_bound_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.lower_bound(15)->first);
 	V.push_back(m.lower_bound(11)->first);
 	V.push_back(m.lower_bound(10)->first);
+	V.push_back( m.lower_bound(99) == m.end() );
 	V.push_back( m.lower_bound(9999) == m.end() );
 	V.push_back( m.lower_bound(9991) == m.end() );
-	
+
 	_map mp2;
 	
     mp2.insert(ft::make_pair(20, 20));
@@ -771,6 +771,7 @@ static void lower_bound_test_u(std::vector<int> &V, struct s_time_res &res)
 	        V.push_back(it->first);
     }
 
+	
 	res.ft_end = timer();
 }
 
@@ -779,7 +780,7 @@ static void lower_bound_test_s(std::vector<int> &V, struct s_time_res &res)
 	typedef std::map<int, int> _map;
 
 	res.std_start = timer();
-
+	
 	_map m;
 	for (int i = 1; i < 100; i += 10)
 		m.insert(std::make_pair(i, i * 100));
@@ -787,6 +788,7 @@ static void lower_bound_test_s(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.lower_bound(15)->first);
 	V.push_back(m.lower_bound(11)->first);
 	V.push_back(m.lower_bound(10)->first);
+	V.push_back( m.lower_bound(99) == m.end() );
 	V.push_back( m.lower_bound(9999) == m.end() );
 	V.push_back( m.lower_bound(9991) == m.end() );
 	
@@ -801,9 +803,9 @@ static void lower_bound_test_s(std::vector<int> &V, struct s_time_res &res)
     for (int i = 11; i < 70; i += 10) {
         it = mp2.lower_bound(i);
 		if (it != mp2.end())
-        	V.push_back(it->first);
+	        V.push_back(it->first);
     }
-	
+
 	res.std_end = timer();
 }
 
@@ -824,7 +826,6 @@ static void upper_bound_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.upper_bound(9999) == m.end());
 	V.push_back(m.upper_bound(9991) == m.end());
 
-	
 	res.ft_end = timer();
 }
 
@@ -855,7 +856,6 @@ static void equal_range_test_u(std::vector<int> &V, struct s_time_res &res)
 	
 	res.ft_start = timer();
 	
-	(void) V;
 	_map m2;
 	V.push_back(m2.equal_range(200).first == m2.end());
 	V.push_back(m2.equal_range(200).second == m2.end());

@@ -2,14 +2,15 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++ build active file",
-            "command": "/usr/bin/c++",
+            "label": "C/C++: clang++ build active file",
+            "command": "/usr/bin/clang++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "main.cpp test/utils_test.cpp test/vector_test.cpp test/stack_test.cpp test/pair_test.cpp test/map_test.cpp",
+                "*.cpp",
+                "test/*.cpp",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "${fileDirname}/ft_containers"
             ],
             "options": {
                 "cwd": "${fileDirname}"

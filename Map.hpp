@@ -192,69 +192,64 @@ class Map
 
 		iterator lower_bound (const key_type& k)
 		{
-			iterator it = begin();
-			iterator ite = end();
-			for (; it != ite; it++)
+			node	*tmp	= _tree.root;
+			node	*tmp_p	= _tree.nil;
+			
+			while (tmp->isNil == false)
 			{
-				if (!_comp(it->first, k))
-					return (it);
+				tmp_p = tmp;
+				if (tmp->pair.first == k)
+					return iterator(tmp, _tree.root);
+				if (_comp(k, tmp->pair.first))
+					tmp = tmp->left;
+				else
+					tmp = tmp->right;
 			}
-			return (it);
+			if (_comp(tmp_p->pair.first, k))
+				return iterator(tmp_p->successor(), _tree.root);
+			return iterator(tmp_p, _tree.root);
 		}
 
 		const_iterator lower_bound (const key_type& k) const
 		{
-			iterator it = begin();
-			iterator ite = end();
-			for (; it != ite; it++)
-			{
-				if (!_comp(it->first, k))
-					return (it);
-			}
-			return (it);
+			return lower_bound(k);
 		}
 
 		iterator upper_bound (const key_type& k)
 		{
-			iterator it = begin();
-			iterator ite = end();
-			for (; it != ite; it++)
+			node	*tmp	= _tree.root;
+			node	*tmp_p	= _tree.nil;
+			
+			while (tmp->isNil == false)
 			{
-				if (_comp(k, it->first))
-					return (it);
+				tmp_p = tmp;
+				if (tmp->pair.first == k)
+					return iterator(tmp->successor(), _tree.root);
+				if (_comp(k, tmp->pair.first))
+					tmp = tmp->left;
+				else
+					tmp = tmp->right;
 			}
-			return (it);
+			if (_comp(tmp_p->pair.first, k))
+				return iterator(tmp_p->successor(), _tree.root);
+			return iterator(tmp_p, _tree.root);
 		}
 
 		const_iterator upper_bound (const key_type& k) const
 		{
-			iterator it = begin();
-			iterator ite = end();
-			for (; it != ite; it++)
-			{
-				if (_comp(k, it->first))
-					return (it);
-			}
-			return (it);
+			return upper_bound(k);
 		}
 
 		Pair<iterator,iterator> equal_range (const key_type& k)
 		{
-			node *tmp = _tree.root;
-			while (tmp->isNil == false)
-			{
-				if (_comp(tmp->pair.first, k))
-					tmp = tmp->successor();
-				else
-				{
-					if (tmp->pair.first == k)
-						return ( ft::make_pair( iterator(tmp, _tree.root), ++(iterator(tmp, _tree.root))));
-					else
-						return ( ft::make_pair( iterator(tmp, _tree.root), iterator(tmp, _tree.root)));
-				}
-			}
-			return ( ft::make_pair( iterator(tmp, _tree.root), iterator(tmp, _tree.root)));
+			return ft::make_pair( lower_bound(k), upper_bound(k));
 		}
+
+		Pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+		{
+			return ft::make_pair( lower_bound(k), upper_bound(k));
+		}
+
 
 		allocator_type get_allocator() const { return _alloc; }
 
