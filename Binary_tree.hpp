@@ -3,6 +3,9 @@
 
 #include "pair.hpp"
 
+#define BLACK			0
+#define RED				1
+#define DOUBLE_BLACK	2
 
 template<typename Key, typename Value>
 struct node
@@ -20,18 +23,19 @@ struct node
 		pair_type	pair;
 		bool		isNil;
 		int			height;
+		char		color;
 	
 	node(node const *other) : left(other->left), right(other->right),
-		parrent(other->right), pair(other->pair), isNil(false), height(other->height)
+		parrent(other->right), pair(other->pair), isNil(false), height(other->height), color(other->color)
 	{
 	}
 
 	node(pair_type const &p, node *nil) : left(nil), right(nil),
-		parrent(nil), pair(p), isNil(false), height(0)
+		parrent(nil), pair(p), isNil(false), height(0), color(BLACK)
 	{
 	}
 	
-	node(void) : left(NULL), right(NULL), parrent(NULL), pair(), isNil(true), height(0)
+	node(void) : left(NULL), right(NULL), parrent(NULL), pair(), isNil(true), height(0), color(BLACK)
 	{
 	}
 
@@ -116,6 +120,42 @@ struct node
 		}
 		return (tmp->parrent);
 	}
+	bool isOnLeft(void) { return this == parrent->left; }
+
+	node *uncle(void)
+	{
+	if (parrent->isNil ||  parrent->parrent->isNil)
+		return parrent->isNil ;
+	if (parrent->isOnLeft())
+		return parrent->parrent->right;
+	else
+		return parrent->parrent->left;
+	}
+
+	node *sibling(void)
+	{
+		if (parrent->isNil)
+			return parrent;
+		if (isOnLeft())
+			return parrent->right;
+		else
+			return parrent->left;
+	}
+
+	void moveDown(node *nParent)
+	{
+		if (parrent->isNil == false)
+		{
+			if (isOnLeft())
+				parrent->left = nParent;
+			else
+				parrent->right = nParent;
+		}
+		nParent->parrent = parrent;
+		parrent = nParent;
+	}
+
+	bool hasRedChild() { return (left->color == RED || right->color == RED); }
 
 };
 
@@ -274,41 +314,55 @@ public:
 
 	node *insert_element(const key_type& k) // insert by key
 	{
-		node *new_node;
-		node *subtree 	= find(k);
-		
-		if (subtree->isNil == false && subtree->pair.first == k)
-			return subtree;
-		new_node = make_node(ft::make_pair(k, mapped_type()));	
-		_size++;
-		if (subtree == nil)
-		{
-			root = new_node;
-			return (new_node);
-		}
-		if (_comp(new_node->pair.first, subtree->pair.first))
-			return subtree_insert_before(subtree, new_node);
-		else
-			return subtree_insert_after(subtree, new_node);
+		return insert_element(ft::make_pair(k, mapped_type()));
 	}
 
 	node *insert_element(const value_type& val) // insert pair
 	{
 		node *new_node;
 		node *subtree 	= find(val.first);
+
 		if (subtree->isNil == false && subtree->pair.first == val.first)
 			return subtree;
-		new_node = make_node(val);	
+		new_node = make_node(val);
+		new_node->color = RED;	
 		_size++;
 		if (subtree == nil)
-		{
 			root = new_node;
-			return (new_node);
-		}
-		if (_comp(new_node->pair.first, subtree->pair.first))
-			return subtree_insert_before(subtree, new_node);
+		else if (_comp(new_node->pair.first, subtree->pair.first))
+			subtree_insert_before(subtree, new_node);
 		else
-			return subtree_insert_after(subtree, new_node);
+			subtree_insert_after(subtree, new_node);
+		maintain_balance(new_node);
+		return new_node;
+	}
+
+	void maintain_balance(node *x)
+	{
+		node *parrent		= x->parrent;
+		node *grand_parrent	= parrent->parrent;
+		node *uncle;
+
+		if (grand_parrent->left == parrent)
+			uncle = grand_parrent->right;
+		else
+			uncle = grand_parrent->left;
+
+		if (x == root)
+			x->color = BLACK;
+		if (parrent->color != BLACK && x != root)
+		{
+			if (uncle->color == RED)
+			{
+				parrent->color = BLACK;
+				uncle->color = BLACK;
+				if (grand_parrent->isNil == false)
+					grand_parrent->color = RED;
+				maintain_balance(grand_parrent);
+			}
+			else if (uncle->color == BLACK)
+				rotate(parrent);
+		}
 	}
 
 	void left_rotate(node *x)
@@ -329,7 +383,6 @@ public:
 			x->parrent->right = y;
 		y->left = x;
 		x->parrent = y;
-		update_subtree_props(x);
 	}
 
 	void right_rotate(node *x)
@@ -350,33 +403,11 @@ public:
 			x->parrent->right = y;
 		y->right = x;
 		x->parrent = y;
-		update_subtree_props(x);
+		// update_subtree_props(x);
 	}
 
-	void update_subtree_props(node *leaf) // go up to root and update height of every node
-	{
-		node	*tmp = leaf;
 
-		while (tmp->isNil == false)
-		{
-			if (tmp->right->isNil && tmp->left->isNil)
-				tmp->height = 0;
-			else
-				tmp->height = std::max(tmp->left->height, tmp->right->height) + 1;
-			tmp = tmp->parrent;
-		}
-	}
-
-	int subtree_height(node *subtree)
-	{
-		if (subtree->left->isNil && subtree->right->isNil)
-			return 0;
-		int h_left = subtree_height(subtree->left);
-		int h_right = subtree_height(subtree->right);
-		return std::max(h_left, h_right) + 1;
-	}
-
-	void rotate(node *y)
+	void rotate(node *y) // parrent 
 	{
 		node	*x;
 		node	*parrent_tmp = y->parrent;
@@ -387,41 +418,27 @@ public:
 			x = y->right;
 		if (x->isNil || y->isNil)
 			return ;
-		if (y->parrent->left == y && x == y->left)
-			right_rotate(y->parrent);
-		else if (y->parrent->left == y && x == y->right)
+		if (y->parrent->left == y && x == y->left)  // left left case
+		{
+			right_rotate(parrent_tmp);
+			std::swap(parrent_tmp->color, y->color);
+		}
+		else if (y->parrent->left == y && x == y->right) // left right case
 		{
 			left_rotate(y);
 			right_rotate(parrent_tmp);
+			std::swap(parrent_tmp->color, y->color);
 		}
-		else if (y == y->parrent->right && x == y->right)
+		else if (y == y->parrent->right && x == y->right) // right right case
+		{
 			left_rotate(parrent_tmp);
-		else if (y == y->parrent->right && x == y->left)
+			std::swap(parrent_tmp->color, y->color);
+		}
+		else if (y == y->parrent->right && x == y->left) // right left case
 		{
 			right_rotate(y);
 			left_rotate(parrent_tmp);
-		}
-	}
-
-	void maintainBalance(node *subtree)
-	{
-		node	*subtree_to_check = subtree;
-		int		skew;
-
-		while (subtree_to_check->isNil == false)
-		{
-			skew = subtree_to_check->right->height - subtree_to_check->left->height;
-			if (skew > 1)
-			{
-				rotate(subtree_to_check->right);
-				return ; // need to stop?? test without
-			}
-			else if (skew < -1)
-			{
-				rotate(subtree_to_check->left);
-				return ;
-			}
-			subtree_to_check = subtree_to_check->parrent;
+			std::swap(parrent_tmp->color, y->color);
 		}
 	}
 
@@ -433,8 +450,6 @@ public:
 			subtree->right = new_el;
 		else
 			subtree->successor()->left = new_el;
-		update_subtree_props(new_el);
-		maintainBalance(subtree);
 		return new_el;
 	}
 
@@ -452,71 +467,234 @@ public:
 			prec->right = new_el;
 			new_el = prec;
 		}
-		update_subtree_props(new_el);
-		maintainBalance(subtree);
 		return new_el;
 	}
 
-	void subtree_delete(node *el)
+	void swapColors(node *x1, node *x2) { std::swap(x1->color, x2->color); }
+
+
+	void fixRedRed(node *x)
 	{
-		node *parrent = el->parrent;
-		// case 1: no child
-		if (el->left->isNil && el->right->isNil)
+	// if x is root color it black and return
+		if (x == root)
 		{
-			if (el != root)
+			x->color = BLACK;
+			return ;
+		}
+
+	// initialize parrent, grandparent, uncle
+		node *parrent = x->parrent, *grandparent = parrent->parrent,
+			*uncle = x->uncle();
+
+		if (parrent->color != BLACK)
+		{
+			if (uncle->isNil == false && uncle->color == RED)
+			{ // uncle red, perform recoloring and recurse
+				parrent->color = BLACK;
+				uncle->color = BLACK;
+				grandparent->color = RED;
+				fixRedRed(grandparent);
+			} else
+			{ // Else perform LR, LL, RL, RR
+				if (parrent->isOnLeft())
+				{
+					if (x->isOnLeft())
+					{ // for left right
+						swapColors(parrent, grandparent);
+					}
+					else
+					{
+						left_rotate(parrent);
+						swapColors(x, grandparent);
+					}
+					// for left left and left right
+					right_rotate(grandparent);
+					} else {
+				if (x->isOnLeft())
+				{ // for right left
+					right_rotate(parrent);
+					swapColors(x, grandparent);
+				}
+				else
+					swapColors(parrent, grandparent);
+				leftRotate(grandparent); // for right right and right left
+				}
+			}
+		}
+	}
+
+	node *BSTreplace(node *x)
+	{
+	// when node have 2 children
+		if (x->left->isNil == false && x->right->isNil == false)
+			return x->successor();
+	// when leaf
+		if (x->left->isNil && x->right->isNil)
+			return x->left;
+	// when single child
+		if (x->left->isNil == false)
+			return x->left;
+		else
+			return x->right;
+	}
+
+	void subtree_delete(node *v)
+	{
+		node *u = BSTreplace(v);
+		// True when u and v are both black
+		bool uvBlack = ((u->isNil || u->color == BLACK) && (v->color == BLACK));
+		node *parrent = v->parrent;
+
+		if (u->isNil)
+		{
+			// u is NULL therefore v is leaf
+			if (v == root) { root = nil; }
+			else
 			{
-				if (parrent->isNil == false && parrent->left == el)
-					parrent->left = nil;
-				else if (parrent->isNil == false)
-					parrent->right = nil;
+			if (uvBlack)
+			{
+			// u and v both black
+			// v is leaf, fix double black at v
+			fixDoubleBlack(v);
 			}
 			else
-				root = nil;
-			delete el;
+			{	// u or v is red
+				if (v->sibling()->isNil == false) // sibling is not null, make it red"
+					v->sibling()->color = RED;
+			}
+			// delete v from the tree
+			if (v->isOnLeft())
+				parrent->left = nil;
+			else
+				parrent->right = nil;
+			}
+			delete v;
+			return;
 		}
-		// case 2: two child
-		else if (el->right->isNil == false && el->left->isNil == false)
-		{
-			node * successor = el->successor();
-			node * successor_copy = make_node(successor);
-			subtree_delete(successor);
-			successor_copy->right = el->right;
-			successor_copy->left = el->left;
-			successor_copy->parrent = el->parrent;
-			if (parrent->isNil == false && parrent->left == el)
-				parrent->left = successor_copy;
-			else if (parrent->isNil == false)
-				parrent->right = successor_copy;
-			if (el->left->isNil == false)
-				el->left->parrent = successor_copy;
-			if (el->right->isNil == false)
-				el->right->parrent = successor_copy;
-			if (root == el)
-				root = successor_copy;
-			delete el;
+		if (v->left->isNil || v->right->isNil)
+		{	// v has 1 child
+			if (v == root)
+			{	// v is root, assign the u to root and delete v
+				root = u;
+				u->left = u->right = u->parrent = nil;
+				delete v;
+			}
+			else
+			{	// Detach v from tree and move u up
+				if (v->isOnLeft())
+					parrent->left = u;
+				else
+					parrent->right = u;
+				delete v;
+				u->parrent = parrent;
+				if (uvBlack)
+				{	// u and v both black, fix double black at u
+					fixDoubleBlack(u);
+				}
+				else
+				{	// u or v red, color u black
+					u->color = BLACK;
+				}
+			}
+			return;
 		}
-		// case 3: only 1 child
+		// v has 2 children, swap values with successor and recurse
+		swapValues(u, v);
+		subtree_delete(u);
+	}
+
+	void swapValues(node *u, node *v)
+	{
+		node * successor_copy = make_node(u);
+		successor_copy->right = v->right;
+		successor_copy->left = v->left;
+		successor_copy->parrent = v->parrent;
+		if (v->parrent->isNil == false && v->isOnLeft())
+			v->parrent->left = successor_copy;
+		else if (v->parrent->isNil == false)
+			v->parrent->right = successor_copy;
+		if (v->left->isNil == false)
+			v->left->parrent = successor_copy;
+		if (v->right->isNil == false)
+			v->right->parrent = successor_copy;
+		if (root == v)
+			root = successor_copy;
+		delete v;
+	}
+
+	void fixDoubleBlack(node *x)
+	{
+		if (x == root) // Reached root
+			return ;
+
+		node *sibling = x->sibling(), *parrent = x->parrent;
+		if (sibling->isNil)
+		{ // No sibiling, double black pushed up
+			fixDoubleBlack(parrent);
+		}
 		else
 		{
-			node *child = el->left->isNil ? el->right : el->left;
-			if (el != root)
-			{
-				if (parrent->left == el)
-					parrent->left = child;
-				else
-					parrent->right = child;
-				child->parrent = el->parrent;
+			if (sibling->color == RED)
+			{	// Sibling red
+				parrent->color = RED;
+				sibling->color = BLACK;
+				if (sibling->isOnLeft()) // left case
+					right_rotate(parrent);
+				else	// right case
+					left_rotate(parrent);
+				fixDoubleBlack(x);
 			}
 			else
-			{
-				root = child;
-				child->parrent = nil;
+			{	// Sibling black
+				if (sibling->hasRedChild())
+				{	// at least 1 red children
+					if (sibling->left != NULL && sibling->left->color == RED)
+					{
+						if (sibling->isOnLeft())
+						{	// left left
+							sibling->left->color = sibling->color;
+							sibling->color = parrent->color;
+							right_rotate(parrent);
+						}
+						else
+						{	// right left
+							sibling->left->color = parrent->color;
+							right_rotate(sibling);
+							left_rotate(parrent);
+						}
+					}
+					else
+					{
+						if (sibling->isOnLeft())
+						{	// left right
+							sibling->right->color = parrent->color;
+							left_rotate(sibling);
+							right_rotate(parrent);
+						}
+						else
+						{	// right right
+							sibling->right->color = sibling->color;
+							sibling->color = parrent->color;
+							left_rotate(parrent);
+						}
+					}
+					parrent->color = BLACK;
+				}
+				else
+				{	// 2 black children
+					sibling->color = RED;
+					if (parrent->color == BLACK)
+						fixDoubleBlack(parrent);
+					else
+						parrent->color = BLACK;
+				}
 			}
-			delete el;
 		}
-		update_subtree_props(parrent);
 	}
+
+
 };
+
 
 
 
