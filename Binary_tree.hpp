@@ -159,29 +159,25 @@ struct node
 		return (b < a || b == a);
 	}
 
-template<typename T, typename M, typename Alloc, typename Compare = std::less<T> >
-class BStree
+template<typename T, typename M, typename Compare = std::less<T> >
+class Tree
 {
 public:
-		typedef node<T, M>					node;
-		typedef typename node::key_type		key_type;
-		typedef typename node::mapped_type	mapped_type;
-		typedef ft::Pair<const key_type, mapped_type> value_type;		
-		typedef Alloc												allocator_type;
-		typedef typename allocator_type::pointer					pointer;
-		typedef typename allocator_type::size_type					size_type;
-		typedef	Compare												key_compare;
-		// typedef ft::Pair<const Key, mapped_type> 					value_type;
-		
-		pointer 	root;
-		pointer 	nil;
-		Alloc		_alloc;
-		key_compare _comp;
-		size_type 	_size;
+		typedef node<T, M>								node;
+		typedef typename node::key_type					key_type;
+		typedef typename node::mapped_type				mapped_type;
+		typedef ft::Pair<const key_type, mapped_type>	value_type;		
+		typedef size_t									size_type;
+		typedef	Compare									key_compare;
+
+		node		*root;
+		node		*nil;
+		key_compare	_comp;
+		size_type	_size;
 
 public:
 
-	BStree(const key_compare& comp = key_compare(), size_type size = 0) : _comp(comp), _size(size)
+	Tree(const key_compare& comp = key_compare(), size_type size = 0) : _comp(comp), _size(size)
 	{
 		nil = make_node();
 		nil->left = nil;
@@ -190,19 +186,21 @@ public:
 		root = nil;
 	}
 
-	~BStree()
+	~Tree()
 	{
 		delete_tree(root);
-		delete_node(nil);
+		delete nil;
 	}
 
-	// BStree(BStree const & other)
-	// {
-	
+	Tree(Tree const & other)
+	{
+		root = nil;
+		root = other.clone_tree(other.root, root, nil);
+		_size = other._size;
+		_comp = other._comp;
+	}
 
-	// }
-
-	BStree &operator=(BStree &other)
+	Tree &operator=(Tree &other)
 	{
 		if (this != &other)
 		{
@@ -210,7 +208,6 @@ public:
 			root = nil;
 			root = other.clone_tree(other.root, root, nil);
 			_size = other._size;
-			_alloc = other._alloc;
 			_comp = other._comp;
 		}
 		return (*this);
@@ -245,24 +242,14 @@ public:
 
 	node *get_root() { return root; }
 
-	void delete_node(node * to_del)
+	node *make_node(const node node_type = node()) 
 	{
-		_alloc.destroy(to_del);
-		_alloc.deallocate(to_del, sizeof(node));
+		return new node(node_type);
 	}
 
-	pointer make_node(const node node_type = node()) 
+	node *make_node(value_type const &p)
 	{
-		node * new_node = _alloc.allocate(1);
-		_alloc.construct(new_node, node_type);
-		return (new_node);
-	}
-
-	pointer make_node(value_type const &p)
-	{
-		node *new_node = _alloc.allocate(1);
-		_alloc.construct(new_node, node(p, nil));
-		return (new_node);
+		return new node(p, nil);
 	}
 
 	void delete_tree(node *root)
@@ -271,19 +258,19 @@ public:
 			return ;
 		delete_tree(root->left);
 		delete_tree(root->right);
-		delete_node(root);
+		delete root;
 	}
 
  	node *clone_tree(node *root, node *parrent, node *nil)
-    {	
-        if (root->isNil)
+	{	
+		if (root->isNil)
 			return (nil);
 		node *new_el = make_node(*root);
 		new_el->parrent = parrent;
 		new_el->left = clone_tree(root->left, new_el, nil);
 		new_el->right = clone_tree(root->right, new_el, nil);
 		return new_el;
-    }
+	}
 
 	node *insert_element(const key_type& k) // insert by key
 	{
@@ -342,12 +329,12 @@ public:
 			x->parrent->right = y;
 		y->left = x;
 		x->parrent = y;
-        update_subtree_props(x);
+		update_subtree_props(x);
 	}
 
 	void right_rotate(node *x)
 	{
-        if (x->left == nil)
+		if (x->left == nil)
 			return ;
 		node *y = x->left;
 		x->left = y->right;
@@ -363,8 +350,8 @@ public:
 			x->parrent->right = y;
 		y->right = x;
 		x->parrent = y;
-        update_subtree_props(x);
-    }
+		update_subtree_props(x);
+	}
 
 	void update_subtree_props(node *leaf) // go up to root and update height of every node
 	{
@@ -389,32 +376,32 @@ public:
 		return std::max(h_left, h_right) + 1;
 	}
 
-    void rotate(node *y)
-    {
-        node	*x;
-        node	*parrent_tmp = y->parrent;
+	void rotate(node *y)
+	{
+		node	*x;
+		node	*parrent_tmp = y->parrent;
 
-        if (y->left->height > y->right->height)
-            x = y->left;
-        else
-            x = y->right;
-        if (x->isNil || y->isNil)
-            return ;
-        if (y->parrent->left == y && x == y->left)
-            right_rotate(y->parrent);
-        else if (y->parrent->left == y && x == y->right)
-        {
-            left_rotate(y);
-            right_rotate(parrent_tmp);
-        }
-        else if (y == y->parrent->right && x == y->right)
-            left_rotate(parrent_tmp);
-        else if (y == y->parrent->right && x == y->left)
-        {
-            right_rotate(y);
-            left_rotate(parrent_tmp);
-        }
-    }
+		if (y->left->height > y->right->height)
+			x = y->left;
+		else
+			x = y->right;
+		if (x->isNil || y->isNil)
+			return ;
+		if (y->parrent->left == y && x == y->left)
+			right_rotate(y->parrent);
+		else if (y->parrent->left == y && x == y->right)
+		{
+			left_rotate(y);
+			right_rotate(parrent_tmp);
+		}
+		else if (y == y->parrent->right && x == y->right)
+			left_rotate(parrent_tmp);
+		else if (y == y->parrent->right && x == y->left)
+		{
+			right_rotate(y);
+			left_rotate(parrent_tmp);
+		}
+	}
 
 	void maintainBalance(node *subtree)
 	{
@@ -425,12 +412,12 @@ public:
 		{
 			skew = subtree_to_check->right->height - subtree_to_check->left->height;
 			if (skew > 1)
-            {
+			{
 				rotate(subtree_to_check->right);
 				return ; // need to stop?? test without
 			}
 			else if (skew < -1)
-            {
+			{
 				rotate(subtree_to_check->left);
 				return ;
 			}
@@ -485,7 +472,7 @@ public:
 			}
 			else
 				root = nil;
-			delete_node(el);
+			delete el;
 		}
 		// case 2: two child
 		else if (el->right->isNil == false && el->left->isNil == false)
@@ -506,7 +493,7 @@ public:
 				el->right->parrent = successor_copy;
 			if (root == el)
 				root = successor_copy;
-			delete_node(el);
+			delete el;
 		}
 		// case 3: only 1 child
 		else
@@ -518,14 +505,14 @@ public:
 					parrent->left = child;
 				else
 					parrent->right = child;
-                child->parrent = el->parrent;
+				child->parrent = el->parrent;
 			}
 			else
-            {
-                root = child;
-                child->parrent = nil;
-            }
-			delete_node(el);
+			{
+				root = child;
+				child->parrent = nil;
+			}
+			delete el;
 		}
 		update_subtree_props(parrent);
 	}

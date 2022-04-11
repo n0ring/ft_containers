@@ -13,7 +13,7 @@ namespace ft
 template < class Key,												// map::key_type
 			class T,												// map::mapped_type
 			class Compare = std::less<Key>,							// map::key_compare
-			class Alloc = std::allocator< node<Key, T> >	// map::allocator_type
+			class Alloc = std::allocator< ft::Pair<const Key, T> >	// map::allocator_type
 >
 class Map
 {
@@ -49,7 +49,7 @@ class Map
 	};
 
 	public:
-		BStree<Key, T, Alloc, key_compare>	_tree;
+		Tree<Key, T, key_compare>	_tree;
 		allocator_type	_alloc;
 		key_compare		_comp;
 		value_compare	_value_comp;
