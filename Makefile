@@ -1,5 +1,5 @@
 SRC		=	main.cpp test/utils_test.cpp test/vector_test.cpp\
-			test/stack_test.cpp test/pair_test.cpp test/map_test.cpp
+			test/stack_test.cpp test/pair_test.cpp test/map_test.cpp test/set_test.cpp
 OBJ		=	$(SRC:.cpp=.o)
 NAME	=	ft_containers
 CC		=	c++

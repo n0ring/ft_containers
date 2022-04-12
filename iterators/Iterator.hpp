@@ -217,7 +217,7 @@ class reverse_iterator
 				return (static_cast<typename reverse_iterator<Iterator>::difference_type>(rhs.base() - lhs.base()));
 				}
 template<typename T>
-class iterator_map
+class iterator_tree
 {
 	private:
 		T	*current;
@@ -236,41 +236,41 @@ class iterator_map
 
 
 		// default 
-		iterator_map(void) : current(NULL), tree_root(NULL) {}
-		iterator_map(T *current_pos, T *r) : current(current_pos), tree_root(r) {}
+		iterator_tree(void) : current(NULL), tree_root(NULL) {}
+		iterator_tree(T *current_pos, T *r) : current(current_pos), tree_root(r) {}
 		//copy
-		iterator_map(iterator_map<T> const &other) : current(other.current),
+		iterator_tree(iterator_tree<T> const &other) : current(other.current),
 			tree_root(other.tree_root) {}
 		// copy assignable
-		iterator_map &operator=(iterator_map<T> const &other)
+		iterator_tree &operator=(iterator_tree<T> const &other)
 		{
 			current = other.current;
 			tree_root = other.tree_root;
 			return (*this);
 		}
-		~iterator_map(void) {}
+		~iterator_tree(void) {}
 
-		// iterator_map(T *ptr) : current(ptr) {}
+		// iterator_tree(T *ptr) : current(ptr) {}
 		
 		// template <class Iter>
-		// iterator_map (const iterator_map<Iter>& rev_it) : current(rev_it.current) { }
+		// iterator_tree (const iterator_tree<Iter>& rev_it) : current(rev_it.current) { }
 
 		iterator_type* base() const { return (current); }
 		reference operator*() const {  return (current->value); }
 
-		iterator_map &operator++() { 
+		iterator_tree &operator++() { 
 			current = current->successor();
 			return *this;
 		}
 
-		iterator_map  operator++(int i) {
+		iterator_tree  operator++(int i) {
 			(void) i;
-			iterator_map tmp = *this;
+			iterator_tree tmp = *this;
 			current = current->successor();
 			return tmp;
 		}
 
-		iterator_map &operator--() { 
+		iterator_tree &operator--() { 
 			if (this->base()->isNil)
 			{
 				current = tree_root->subtree_last();
@@ -280,14 +280,14 @@ class iterator_map
 			return *this;
 		}
 
-		iterator_map  operator--(int i) {
+		iterator_tree  operator--(int i) {
 			(void) i;
 			if (this->base()->isNil)
 			{
 				current = tree_root->subtree_last();
 				return *this;
 			}
-			iterator_map tmp = *this;
+			iterator_tree tmp = *this;
 			current = current->predecessor();
 			return tmp;
 		}
@@ -296,12 +296,12 @@ class iterator_map
 
 
 		template <class Iterator>
-		  bool operator== (const iterator_map<Iterator>& lhs,
-				const iterator_map<Iterator>& rhs) { return (lhs.base() == rhs.base() ); }
+		  bool operator== (const iterator_tree<Iterator>& lhs,
+				const iterator_tree<Iterator>& rhs) { return (lhs.base() == rhs.base() ); }
 
 		template <class Iterator>
-		bool operator!= (const iterator_map<Iterator>& lhs,
-				const iterator_map<Iterator>& rhs) { return !(lhs == rhs);}
+		bool operator!= (const iterator_tree<Iterator>& lhs,
+				const iterator_tree<Iterator>& rhs) { return !(lhs == rhs);}
 
 
 
@@ -343,7 +343,7 @@ class reverse_iterator_map
 		}
 		~reverse_iterator_map(void) {}
 
-		// iterator_map(T *ptr) : current(ptr) {}
+		// iterator_tree(T *ptr) : current(ptr) {}
 		
 		// template <class Iter>
 		// reverse_iterator_map (const reverse_iterator_map<Iter>& rev_it) : current(rev_it.current),

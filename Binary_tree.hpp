@@ -36,6 +36,9 @@ struct node
 	// for nil el
 	node(void) : left(NULL), right(NULL), parent(NULL), value(), isNil(true), height(0), color(BLACK)
 	{
+		left = this;
+		right = this;
+		parent = this;
 	}
 
 	node &operator=(node const &other)
@@ -172,9 +175,9 @@ struct node
 	template<typename value_type>
 	bool operator<(node<value_type> &a, node<value_type> &b)
 	{
-		if (a.value->first < b.value.first)
+		if (a.value < b.value)
 			return true;
-		if (a.value->first == b.value.first && a.value->second < b.value.second)
+		if (a.value == b.value && a.value->second < b.value.second)
 			return true;
 		return false;
 	}
@@ -205,14 +208,14 @@ public:
 		typedef size_t							size_type;
 		typedef	Compare							key_compare;
 
-		node		*root;
 		node		*nil;
-		key_compare	_comp;
+		node		*root;
 		size_type	_size;
+		key_compare	_comp;
 
 public:
 
-	Tree(const key_compare& comp = key_compare(), size_type size = 0) : _comp(comp), _size(size)
+	Tree(const key_compare& comp = key_compare(), size_type size = 0) : _size(size), _comp(comp)
 	{
 		nil = new node();
 		nil->left = nil;
@@ -227,12 +230,10 @@ public:
 		delete nil;
 	}
 
-	Tree(Tree const & other)
+	Tree(Tree const & other) : nil (new node()), root(nil),
+		_size(other._size), _comp(other._comp)
 	{
-		root = nil;
 		root = other.clone_tree(other.root, root, nil);
-		_size = other._size;
-		_comp = other._comp;
 	}
 
 	Tree &operator=(Tree &other)
@@ -286,7 +287,7 @@ public:
 		delete root;
 	}
 
- 	node *clone_tree(node *root, node *parent, node *nil)
+ 	node *clone_tree(node *root, node *parent, node *nil) const
 	{	
 		if (root->isNil)
 			return (nil);
@@ -306,7 +307,8 @@ public:
 			subtree 	= find(val);
 		else
 			subtree = sub;
-		if (subtree->isNil == false && subtree->value.first == val.first)
+	
+		if (subtree->isNil == false && subtree->value == val)
 			return subtree;
 		new_node = new node(val, nil);
 		new_node->color = RED;	

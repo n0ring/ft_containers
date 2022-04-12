@@ -127,6 +127,7 @@ void vector_test(void);
 void stack_test(void);
 void pair_test(void);
 void map_test(void);
+void set_test(void);
 
 
 #endif // !ENABLE_IF

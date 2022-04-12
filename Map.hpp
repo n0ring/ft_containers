@@ -26,7 +26,7 @@ class Map
 		typedef typename allocator_type::size_type					size_type;
 		typedef	Compare												key_compare;
 		typedef ft::Pair<const Key, mapped_type> 					value_type;
-		typedef ft::iterator_map<node>								iterator;
+		typedef ft::iterator_tree<node>								iterator;
 		typedef ft::reverse_iterator_map<node>						reverse_iterator;
 		typedef typename iterator::difference_type  				difference_type;
 		typedef iterator											const_iterator;
@@ -108,11 +108,14 @@ class Map
 
 		Pair<iterator,bool> insert(const value_type& val) // value
 		{
-			size_type	size_before		= _tree._size;
-			node		*res_of_insert	= _tree.insert_element(val);
-			bool		insert_status 	= _tree._size != size_before ? true : false;
+			iterator res = find(val.first);
+			node		*res_of_insert;
+			if (res.base()->isNil == false && res->first == val.first)
+				return ft::make_pair(res, false);
+			else
+				res_of_insert	= _tree.insert_element(val);
 
-			return (ft::make_pair(iterator(res_of_insert, _tree.root), insert_status));
+			return (ft::make_pair(iterator(res_of_insert, _tree.root), true));
 		}
 
 		iterator insert (iterator position, const value_type& val)

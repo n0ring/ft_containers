@@ -11,6 +11,7 @@
 #include "Binary_tree.hpp"
 #include "Map.hpp"
 #include "Set.hpp"
+#include <set>
 
 
 // #include "iterators/Iterator.hpp"
@@ -23,10 +24,8 @@ int main(void)
 	// vector_test();
 	// stack_test();
 	// pair_test();
-	// map_test();
-
-	ft::Set<int> a;
-	(void) a;
+	map_test();
+	set_test();
 
 	return (0);
 }
