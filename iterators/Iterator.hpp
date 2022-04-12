@@ -216,7 +216,7 @@ class reverse_iterator
 			const reverse_iterator<Iterator>& rhs){
 				return (static_cast<typename reverse_iterator<Iterator>::difference_type>(rhs.base() - lhs.base()));
 				}
-	template<typename T>
+template<typename T>
 class iterator_map
 {
 	private:
@@ -256,7 +256,7 @@ class iterator_map
 		// iterator_map (const iterator_map<Iter>& rev_it) : current(rev_it.current) { }
 
 		iterator_type* base() const { return (current); }
-		reference operator*() const {  return (current->pair); }
+		reference operator*() const {  return (current->value); }
 
 		iterator_map &operator++() { 
 			current = current->successor();
@@ -350,7 +350,7 @@ class reverse_iterator_map
 		// 	tree_root(rev_it)	{}
 
 		iterator_type* base() const { return (current); }
-		reference operator*() const {  return (current->pair); }
+		reference operator*() const {  return (current->value); }
 
 		reverse_iterator_map &operator++() { 
 			if (this->base()->isNil)
@@ -409,6 +409,11 @@ class reverse_iterator_map
 		template <class Iterator>
 		bool operator!= (const reverse_iterator_map<Iterator>& lhs,
 				const reverse_iterator_map<Iterator>& rhs) { return !(lhs == rhs);}
+
+
+
+
+
 
 
 

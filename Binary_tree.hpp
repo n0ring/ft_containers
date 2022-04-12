@@ -17,24 +17,24 @@ struct node
 		node		*left;
 		node		*right;
 		node		*parent;
-		value_type	pair;
+		value_type	value;
 		bool		isNil;
 		int			height;
 		char		color;
 	
 	node(node const *other) : left(other->left), right(other->right),
-		parent(other->right), pair(other->pair), isNil(false), height(other->height), color(other->color)
+		parent(other->right), value(other->value), isNil(false), height(other->height), color(other->color)
 	{
 	}
 
 
 	node(value_type const &p, node *nil) : left(nil), right(nil),
-		parent(nil), pair(p), isNil(false), height(0), color(BLACK)
+		parent(nil), value(p), isNil(false), height(0), color(BLACK)
 	{
 	}
 	
 	// for nil el
-	node(void) : left(NULL), right(NULL), parent(NULL), pair(), isNil(true), height(0), color(BLACK)
+	node(void) : left(NULL), right(NULL), parent(NULL), value(), isNil(true), height(0), color(BLACK)
 	{
 	}
 
@@ -45,7 +45,7 @@ struct node
 			left = other.left;
 			right = other.right;
 			parent = other.parent;
-			pair = other->pair;
+			value = other->value;
 			isNil = other->isNil;
 		}
 		return *this;
@@ -160,7 +160,7 @@ struct node
 	template<typename value_type>
 	bool operator==(node<value_type> &a, node<value_type> &b)
 	{
-		return (a->pair == b->pair);
+		return (a->value == b->value);
 	}
 
 	template<typename value_type>
@@ -172,9 +172,9 @@ struct node
 	template<typename value_type>
 	bool operator<(node<value_type> &a, node<value_type> &b)
 	{
-		if (a.pair->first < b.pair.first)
+		if (a.value->first < b.value.first)
 			return true;
-		if (a.pair->first == b.pair.first && a.pair->second < b.pair.second)
+		if (a.value->first == b.value.first && a.value->second < b.value.second)
 			return true;
 		return false;
 	}
@@ -197,12 +197,11 @@ struct node
 		return (b < a || b == a);
 	}
 
-template<typename Key, typename value_type, typename Compare = std::less<Key> >
+template<typename value_type, typename Compare>
 class Tree
 {
 public:
-		typedef node<value_type>				node;
-		typedef Key								key_type;		
+		typedef node<value_type>				node;	
 		typedef size_t							size_type;
 		typedef	Compare							key_compare;
 
@@ -258,17 +257,17 @@ public:
 		return (subtree_size(subtree->left) + subtree_size(subtree->right) + 1);
 	}
 
-	node *find(const key_type &value) const
+	node *find(const value_type& value) const
 	{
 		node *tmp = root;
 		node *tmp_p = nil;
 
 		while (tmp != nil)
 		{
-			if (tmp->pair.first == value)
+			if (tmp->value == value)
 				return tmp;
 			tmp_p = tmp;
-			if (_comp(value, tmp->pair.first))
+			if (_comp(value, tmp->value))
 				tmp = tmp->left;
 			else
 				tmp = tmp->right;
@@ -298,19 +297,23 @@ public:
 		return new_el;
 	}
 
-	node *insert_element(const value_type& val) // insert pair
+	node *insert_element(const value_type& val, node *sub = NULL) // insert value
 	{
 		node *new_node;
-		node *subtree 	= find(val.first);
-
-		if (subtree->isNil == false && subtree->pair.first == val.first)
+		node *subtree;
+		
+		if (sub == NULL)
+			subtree 	= find(val);
+		else
+			subtree = sub;
+		if (subtree->isNil == false && subtree->value.first == val.first)
 			return subtree;
 		new_node = new node(val, nil);
 		new_node->color = RED;	
 		_size++;
 		if (subtree == nil)
 			root = new_node;
-		else if (_comp(new_node->pair.first, subtree->pair.first))
+		else if (_comp(new_node->value, subtree->value))
 			subtree_insert_before(subtree, new_node);
 		else
 			subtree_insert_after(subtree, new_node);
