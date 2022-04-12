@@ -1,5 +1,5 @@
-#ifndef MAP_HPP
-#define MAP_HPP
+#ifndef SET_HPP
+#define SET_HPP
 
 #include <iostream>
 #include "pair.hpp"
@@ -10,17 +10,17 @@
 namespace ft
 {
 
-template < class Key,												// map::key_type
-			class T,												// map::mapped_type
-			class Compare = std::less<Key>,							// map::key_compare
-			class Alloc = std::allocator< ft::Pair<const Key, T> >	// map::allocator_type
->
-class Map
+template < typename T,								// set::key_type/value_type
+           typename Compare = std::less<T>,			// set::key_compare/value_compare
+           typename Alloc = std::allocator<T>		// set::allocator_type
+           >
+class Set;
 {
 	public:	
-		typedef node<ft::Pair<const Key, T> >						node;
-		typedef Key													key_type;
-		typedef T													mapped_type;
+		typedef node<Key, T>										node;
+		typedef typename node::key_type								key_type;
+		typedef typename node::mapped_type							mapped_type;
+		typedef typename node::node_type							node_type;
 		typedef Alloc												allocator_type;
 		typedef typename allocator_type::pointer					pointer;
 		typedef typename allocator_type::size_type					size_type;
@@ -47,10 +47,10 @@ class Map
 	};
 
 	public:
-		Tree<Key, value_type, key_compare>	_tree;
-		allocator_type			_alloc;
-		key_compare				_comp;
-		value_compare			_value_comp;
+		Tree<Key, T, key_compare>	_tree;
+		allocator_type	_alloc;
+		key_compare		_comp;
+		value_compare	_value_comp;
 
 	public:
 
@@ -76,9 +76,6 @@ class Map
 
 		Map &operator=(Map<Key, T> &x)
 		{
-			_comp = x._comp;
-			_alloc = x._alloc;
-			
 			_tree = x._tree;
 			return *this;
 		}
@@ -97,10 +94,10 @@ class Map
 
 		mapped_type& operator[] (const key_type& k)
 		{
-			return ( _tree.insert_element(ft::make_pair(k, mapped_type())) )->pair.second;
+			return ( _tree.insert_element(k) )->pair.second;
 		}
 
-		Pair<iterator,bool> insert(const value_type& val) // pair
+		Pair<iterator,bool> insert(const value_type& val)
 		{
 			size_type	size_before		= _tree._size;
 			node		*res_of_insert	= _tree.insert_element(val);
@@ -114,7 +111,7 @@ class Map
 			node		*successor = position.base()->successor();
 
 			if (val.first < successor->pair.first && val.first > position->first)
-				return iterator(_tree.subtree_insert_after(position.base(), new node(val, _tree.nil)), _tree.root);
+				return iterator(_tree.subtree_insert_after(position.base(), _tree.make_node(val)), _tree.root);
 			else
 				return insert(val).first;
 		}

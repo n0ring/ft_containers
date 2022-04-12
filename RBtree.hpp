@@ -19,15 +19,15 @@ class node
 		mapped_type	value;
 		node_type	*left;
 		node_type	*right;
-		node_type	*parrent;
+		node_type	*parent;
 		char		color;
 	
-	node(void) :  left(NULL), right(NULL), parrent(NULL), color(BLACK)
+	node(void) :  left(NULL), right(NULL), parent(NULL), color(BLACK)
 	{
 	}
 			
 	node(key_type key, mapped_type value) : key(key), value(value),
-		left(NULL), right(NULL), parrent(NULL), color(BLACK)
+		left(NULL), right(NULL), parent(NULL), color(BLACK)
 	{
 	}
 	~node(void) {}
@@ -70,16 +70,16 @@ public:
 		x->right = y->left;
 
 		if (y->left != nil)
-			y->left->parrent = x;
-		y->parrent = x->parrent;
-		if (x->parrent == nil)
+			y->left->parent = x;
+		y->parent = x->parent;
+		if (x->parent == nil)
 			root = y;
-		else if (x == x->parrent->left)
-			x->parrent->left = y;
+		else if (x == x->parent->left)
+			x->parent->left = y;
 		else
-			x->parrent->right = y;
+			x->parent->right = y;
 		y->left = x;
-		x->parrent = y;
+		x->parent = y;
 	}
 
 	void right_rotate(node *x)
@@ -93,60 +93,60 @@ public:
 		x->left = y->right;
 
 		if (y->right != nil)
-			y->right->parrent = x;
-		y->parrent = x->parrent;
-		if (x->parrent == nil)
+			y->right->parent = x;
+		y->parent = x->parent;
+		if (x->parent == nil)
 			root = y;
-		else if (x == x->parrent->left)
-			x->parrent->left = y;
+		else if (x == x->parent->left)
+			x->parent->left = y;
 		else
-			x->parrent->right = y;
+			x->parent->right = y;
 		y->right = x;
-		x->parrent = y;
+		x->parent = y;
 	}
 
 	void insert_fixup(node *new_el)
 	{
 		node *y;
-		while (new_el->parrent && new_el->parrent->color == RED)
+		while (new_el->parent && new_el->parent->color == RED)
 		{
-			if (new_el->parrent->parrent && new_el->parrent == new_el->parrent->parrent->left)
+			if (new_el->parent->parent && new_el->parent == new_el->parent->parent->left)
 			{
-				y = new_el->parrent->parrent->right;
+				y = new_el->parent->parent->right;
 				if (y->color == RED)
 				{
-					new_el->parrent->color = BLACK;
+					new_el->parent->color = BLACK;
 					y->color = BLACK;
-					new_el->parrent->parrent->color = RED;
-					new_el = new_el->parrent->parrent;
+					new_el->parent->parent->color = RED;
+					new_el = new_el->parent->parent;
 				}
-				else if (new_el == new_el->parrent->right)
+				else if (new_el == new_el->parent->right)
 				{
-					new_el = new_el->parrent;
+					new_el = new_el->parent;
 					left_rotate(new_el);
 				}
-				new_el->parrent->color = BLACK;
-				new_el->parrent->parrent->color = RED;
+				new_el->parent->color = BLACK;
+				new_el->parent->parent->color = RED;
 				right_rotate(new_el);
 			}
-			else if (new_el->parrent->parrent)
+			else if (new_el->parent->parent)
 			{
-				y = new_el->parrent->parrent->left; // what if p-p-left == null??
+				y = new_el->parent->parent->left; // what if p-p-left == null??
 				if (y->color == RED)
 				{
-					new_el->parrent->color = BLACK;
+					new_el->parent->color = BLACK;
 					y->color = BLACK;
-					new_el->parrent->parrent->color = RED;
-					new_el = new_el->parrent->parrent;
+					new_el->parent->parent->color = RED;
+					new_el = new_el->parent->parent;
 				}
-				else if (new_el == new_el->parrent->left)
+				else if (new_el == new_el->parent->left)
 				{
-					new_el = new_el->parrent;
+					new_el = new_el->parent;
 					right_rotate(new_el);
 				}
-				new_el->parrent->color = BLACK;
-				if (new_el->parrent->parrent)
-					new_el->parrent->parrent->color = RED;
+				new_el->parent->color = BLACK;
+				if (new_el->parent->parent)
+					new_el->parent->parent->color = RED;
 				left_rotate(new_el);
 			}
 		}
@@ -157,7 +157,7 @@ public:
 	{
 		node *tmp_p = nil;
 		node *tmp = root;
-		new_el->parrent = nil;
+		new_el->parent = nil;
 
 		while (tmp != nil)
 		{
@@ -172,7 +172,7 @@ public:
 			else 
 				tmp = tmp->right;
 		}
-		new_el->parrent = tmp_p;
+		new_el->parent = tmp_p;
 		if (tmp_p == nil)
 		{
 			root = new_el;

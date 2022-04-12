@@ -7,35 +7,34 @@
 #define RED				1
 #define DOUBLE_BLACK	2
 
-template<typename Key, typename Value>
+// template<typename Key, typename Value>
+template<typename value_type>
 struct node
-{
-		typedef Key								key_type;
-		typedef Value							mapped_type;
-		typedef	node<key_type, mapped_type>		node_type;
-		typedef ft::Pair<const key_type, mapped_type> pair_type;		
-		typedef pair_type&						reference_type;		
-		typedef pair_type*						pointer;		
-		
-		node_type	*left;
-		node_type	*right;
-		node_type	*parrent;
-		pair_type	pair;
+{		
+		typedef 	value_type& 			reference_type;
+		typedef		value_type*				pointer;
+
+		node		*left;
+		node		*right;
+		node		*parent;
+		value_type	pair;
 		bool		isNil;
 		int			height;
 		char		color;
 	
 	node(node const *other) : left(other->left), right(other->right),
-		parrent(other->right), pair(other->pair), isNil(false), height(other->height), color(other->color)
+		parent(other->right), pair(other->pair), isNil(false), height(other->height), color(other->color)
 	{
 	}
 
-	node(pair_type const &p, node *nil) : left(nil), right(nil),
-		parrent(nil), pair(p), isNil(false), height(0), color(BLACK)
+
+	node(value_type const &p, node *nil) : left(nil), right(nil),
+		parent(nil), pair(p), isNil(false), height(0), color(BLACK)
 	{
 	}
 	
-	node(void) : left(NULL), right(NULL), parrent(NULL), pair(), isNil(true), height(0), color(BLACK)
+	// for nil el
+	node(void) : left(NULL), right(NULL), parent(NULL), pair(), isNil(true), height(0), color(BLACK)
 	{
 	}
 
@@ -45,7 +44,7 @@ struct node
 		{
 			left = other.left;
 			right = other.right;
-			parrent = other.parrent;
+			parent = other.parent;
 			pair = other->pair;
 			isNil = other->isNil;
 		}
@@ -91,88 +90,87 @@ struct node
 	node *successor(void)
 	{
 		node	*tmp		= this;
-		node	*parrent	= tmp->parrent;
+		node	*parent	= tmp->parent;
 
 		if (tmp->right->isNil == false)
 			return (subtree_first(tmp->right));
-		while (parrent->isNil == false && parrent->right == tmp)
+		while (parent->isNil == false && parent->right == tmp)
 		{
-			tmp = parrent;
-			parrent = parrent->parrent;
+			tmp = parent;
+			parent = parent->parent;
 		}
-		return (parrent);
+		return (parent);
 	}
 
 	node *predecessor()
 	{
 		node *tmp		= this;
-		node *parrent	= tmp->parrent;
+		node *parent	= tmp->parent;
 
 		if (tmp->left->isNil == false)
 			return (subtree_last(tmp->left));
-		if (tmp->parrent->right == tmp)
-			return (tmp->parrent);
+		if (tmp->parent->right == tmp)
+			return (tmp->parent);
 		
-		while (parrent->isNil == false && parrent->right != tmp)
+		while (parent->isNil == false && parent->right != tmp)
 		{
-			tmp = parrent;
-			parrent = parrent->parrent;
+			tmp = parent;
+			parent = parent->parent;
 		}
-		return (tmp->parrent);
+		return (tmp->parent);
 	}
-	bool isOnLeft(void) { return this == parrent->left; }
+	bool isOnLeft(void) { return this == parent->left; }
 
 	node *uncle(void)
 	{
-	if (parrent->isNil ||  parrent->parrent->isNil)
-		return parrent->isNil ;
-	if (parrent->isOnLeft())
-		return parrent->parrent->right;
+	if (parent->isNil ||  parent->parent->isNil)
+		return parent->isNil ;
+	if (parent->isOnLeft())
+		return parent->parent->right;
 	else
-		return parrent->parrent->left;
+		return parent->parent->left;
 	}
 
 	node *sibling(void)
 	{
-		if (parrent->isNil)
-			return parrent;
+		if (parent->isNil)
+			return parent;
 		if (isOnLeft())
-			return parrent->right;
+			return parent->right;
 		else
-			return parrent->left;
+			return parent->left;
 	}
 
 	void moveDown(node *nParent)
 	{
-		if (parrent->isNil == false)
+		if (parent->isNil == false)
 		{
 			if (isOnLeft())
-				parrent->left = nParent;
+				parent->left = nParent;
 			else
-				parrent->right = nParent;
+				parent->right = nParent;
 		}
-		nParent->parrent = parrent;
-		parrent = nParent;
+		nParent->parent = parent;
+		parent = nParent;
 	}
 
 	bool hasRedChild() { return (left->color == RED || right->color == RED); }
 
 };
-
-	template<typename Key, typename Value>
-	bool operator==(node<Key, Value> &a, node<Key, Value> &b)
+	template<typename value_type>
+	bool operator==(node<value_type> &a, node<value_type> &b)
 	{
-		return (ft::equal(a->pair.first, b->pair.first) && ft::equal(a->pair.second, b->pair.second));
+		return (a->pair == b->pair);
 	}
 
-	template<typename Key, typename Value>
-	bool operator!=(node<Key, Value> &a, node<Key, Value> &b)
+	template<typename value_type>
+	bool operator!=(node<value_type> &a, node<value_type> &b)
 	{
 		return !(a == b);
 	}
 
-	template<typename Key, typename Value>
-	bool operator<(node<Key, Value> &a, node<Key, Value> &b)
+	template<typename value_type>
+	bool operator<(node<value_type> &a, node<value_type> &b)
 	{
 		if (a.pair->first < b.pair.first)
 			return true;
@@ -181,34 +179,32 @@ struct node
 		return false;
 	}
 
-	template<typename Key, typename Value>
-	bool operator<=(node<Key, Value> &a, node<Key, Value> &b)
+	template<typename value_type>
+	bool operator<=(node<value_type> &a, node<value_type> &b)
 	{
 		return (a < b || a == b);
 	}
 
-	template<typename Key, typename Value>
-	bool operator>(node<Key, Value> &a, node<Key, Value> &b)
+	template<typename value_type>
+	bool operator>(node<value_type> &a, node<value_type> &b)
 	{
 		return (b < a);
 	}
 
-	template<typename Key, typename Value>
-	bool operator>=(node<Key, Value> &a, node<Key, Value> &b)
+	template<typename value_type>
+	bool operator>=(node<value_type> &a, node<value_type> &b)
 	{
 		return (b < a || b == a);
 	}
 
-template<typename T, typename M, typename Compare = std::less<T> >
+template<typename Key, typename value_type, typename Compare = std::less<Key> >
 class Tree
 {
 public:
-		typedef node<T, M>								node;
-		typedef typename node::key_type					key_type;
-		typedef typename node::mapped_type				mapped_type;
-		typedef ft::Pair<const key_type, mapped_type>	value_type;		
-		typedef size_t									size_type;
-		typedef	Compare									key_compare;
+		typedef node<value_type>				node;
+		typedef Key								key_type;		
+		typedef size_t							size_type;
+		typedef	Compare							key_compare;
 
 		node		*root;
 		node		*nil;
@@ -219,10 +215,10 @@ public:
 
 	Tree(const key_compare& comp = key_compare(), size_type size = 0) : _comp(comp), _size(size)
 	{
-		nil = make_node();
+		nil = new node();
 		nil->left = nil;
 		nil->right = nil;
-		nil->parrent = nil;
+		nil->parent = nil;
 		root = nil;
 	}
 
@@ -282,16 +278,6 @@ public:
 
 	node *get_root() { return root; }
 
-	node *make_node(const node node_type = node()) 
-	{
-		return new node(node_type);
-	}
-
-	node *make_node(value_type const &p)
-	{
-		return new node(p, nil);
-	}
-
 	void delete_tree(node *root)
 	{
 		if (root == nil)
@@ -301,20 +287,15 @@ public:
 		delete root;
 	}
 
- 	node *clone_tree(node *root, node *parrent, node *nil)
+ 	node *clone_tree(node *root, node *parent, node *nil)
 	{	
 		if (root->isNil)
 			return (nil);
-		node *new_el = make_node(*root);
-		new_el->parrent = parrent;
+		node *new_el = new node(*root);
+		new_el->parent = parent;
 		new_el->left = clone_tree(root->left, new_el, nil);
 		new_el->right = clone_tree(root->right, new_el, nil);
 		return new_el;
-	}
-
-	node *insert_element(const key_type& k) // insert by key
-	{
-		return insert_element(ft::make_pair(k, mapped_type()));
 	}
 
 	node *insert_element(const value_type& val) // insert pair
@@ -324,7 +305,7 @@ public:
 
 		if (subtree->isNil == false && subtree->pair.first == val.first)
 			return subtree;
-		new_node = make_node(val);
+		new_node = new node(val, nil);
 		new_node->color = RED;	
 		_size++;
 		if (subtree == nil)
@@ -339,29 +320,29 @@ public:
 
 	void maintain_balance(node *x)
 	{
-		node *parrent		= x->parrent;
-		node *grand_parrent	= parrent->parrent;
+		node *parent		= x->parent;
+		node *grand_parrent	= parent->parent;
 		node *uncle;
 
-		if (grand_parrent->left == parrent)
+		if (grand_parrent->left == parent)
 			uncle = grand_parrent->right;
 		else
 			uncle = grand_parrent->left;
 
 		if (x == root)
 			x->color = BLACK;
-		if (parrent->color != BLACK && x != root)
+		if (parent->color != BLACK && x != root)
 		{
 			if (uncle->color == RED)
 			{
-				parrent->color = BLACK;
+				parent->color = BLACK;
 				uncle->color = BLACK;
 				if (grand_parrent->isNil == false)
 					grand_parrent->color = RED;
 				maintain_balance(grand_parrent);
 			}
 			else if (uncle->color == BLACK)
-				rotate(parrent);
+				rotate(parent);
 		}
 	}
 
@@ -373,16 +354,16 @@ public:
 		x->right = y->left;
 
 		if (y->left != nil)
-			y->left->parrent = x;
-		y->parrent = x->parrent;
-		if (x->parrent == nil)
+			y->left->parent = x;
+		y->parent = x->parent;
+		if (x->parent == nil)
 			root = y;
-		else if (x == x->parrent->left)
-			x->parrent->left = y;
+		else if (x == x->parent->left)
+			x->parent->left = y;
 		else
-			x->parrent->right = y;
+			x->parent->right = y;
 		y->left = x;
-		x->parrent = y;
+		x->parent = y;
 	}
 
 	void right_rotate(node *x)
@@ -393,24 +374,24 @@ public:
 		x->left = y->right;
 
 		if (y->right != nil)
-			y->right->parrent = x;
-		y->parrent = x->parrent;
-		if (x->parrent == nil)
+			y->right->parent = x;
+		y->parent = x->parent;
+		if (x->parent == nil)
 			root = y;
-		else if (x == x->parrent->left)
-			x->parrent->left = y;
+		else if (x == x->parent->left)
+			x->parent->left = y;
 		else
-			x->parrent->right = y;
+			x->parent->right = y;
 		y->right = x;
-		x->parrent = y;
+		x->parent = y;
 		// update_subtree_props(x);
 	}
 
 
-	void rotate(node *y) // parrent 
+	void rotate(node *y) // parent 
 	{
 		node	*x;
-		node	*parrent_tmp = y->parrent;
+		node	*parrent_tmp = y->parent;
 
 		if (y->left->height > y->right->height)
 			x = y->left;
@@ -418,23 +399,23 @@ public:
 			x = y->right;
 		if (x->isNil || y->isNil)
 			return ;
-		if (y->parrent->left == y && x == y->left)  // left left case
+		if (y->parent->left == y && x == y->left)  // left left case
 		{
 			right_rotate(parrent_tmp);
 			std::swap(parrent_tmp->color, y->color);
 		}
-		else if (y->parrent->left == y && x == y->right) // left right case
+		else if (y->parent->left == y && x == y->right) // left right case
 		{
 			left_rotate(y);
 			right_rotate(parrent_tmp);
 			std::swap(parrent_tmp->color, y->color);
 		}
-		else if (y == y->parrent->right && x == y->right) // right right case
+		else if (y == y->parent->right && x == y->right) // right right case
 		{
 			left_rotate(parrent_tmp);
 			std::swap(parrent_tmp->color, y->color);
 		}
-		else if (y == y->parrent->right && x == y->left) // right left case
+		else if (y == y->parent->right && x == y->left) // right left case
 		{
 			right_rotate(y);
 			left_rotate(parrent_tmp);
@@ -444,7 +425,7 @@ public:
 
 	node* subtree_insert_after(node* subtree, node *new_el)
 	{
-		new_el->parrent = subtree;
+		new_el->parent = subtree;
 
 		if (subtree->right == nil)
 			subtree->right = new_el;
@@ -459,7 +440,7 @@ public:
 		if (subtree->left == nil)
 		{
 			subtree->left = new_el;
-			new_el->parrent = subtree;
+			new_el->parent = subtree;
 		}
 		else
 		{
@@ -482,29 +463,29 @@ public:
 			return ;
 		}
 
-	// initialize parrent, grandparent, uncle
-		node *parrent = x->parrent, *grandparent = parrent->parrent,
+	// initialize parent, grandparent, uncle
+		node *parent = x->parent, *grandparent = parent->parent,
 			*uncle = x->uncle();
 
-		if (parrent->color != BLACK)
+		if (parent->color != BLACK)
 		{
 			if (uncle->isNil == false && uncle->color == RED)
 			{ // uncle red, perform recoloring and recurse
-				parrent->color = BLACK;
+				parent->color = BLACK;
 				uncle->color = BLACK;
 				grandparent->color = RED;
 				fixRedRed(grandparent);
 			} else
 			{ // Else perform LR, LL, RL, RR
-				if (parrent->isOnLeft())
+				if (parent->isOnLeft())
 				{
 					if (x->isOnLeft())
 					{ // for left right
-						swapColors(parrent, grandparent);
+						swapColors(parent, grandparent);
 					}
 					else
 					{
-						left_rotate(parrent);
+						left_rotate(parent);
 						swapColors(x, grandparent);
 					}
 					// for left left and left right
@@ -512,11 +493,11 @@ public:
 					} else {
 				if (x->isOnLeft())
 				{ // for right left
-					right_rotate(parrent);
+					right_rotate(parent);
 					swapColors(x, grandparent);
 				}
 				else
-					swapColors(parrent, grandparent);
+					swapColors(parent, grandparent);
 				leftRotate(grandparent); // for right right and right left
 				}
 			}
@@ -543,7 +524,7 @@ public:
 		node *u = BSTreplace(v);
 		// True when u and v are both black
 		bool uvBlack = ((u->isNil || u->color == BLACK) && (v->color == BLACK));
-		node *parrent = v->parrent;
+		node *parent = v->parent;
 
 		if (u->isNil)
 		{
@@ -564,9 +545,9 @@ public:
 			}
 			// delete v from the tree
 			if (v->isOnLeft())
-				parrent->left = nil;
+				parent->left = nil;
 			else
-				parrent->right = nil;
+				parent->right = nil;
 			}
 			delete v;
 			return;
@@ -576,17 +557,17 @@ public:
 			if (v == root)
 			{	// v is root, assign the u to root and delete v
 				root = u;
-				u->left = u->right = u->parrent = nil;
+				u->left = u->right = u->parent = nil;
 				delete v;
 			}
 			else
 			{	// Detach v from tree and move u up
 				if (v->isOnLeft())
-					parrent->left = u;
+					parent->left = u;
 				else
-					parrent->right = u;
+					parent->right = u;
 				delete v;
-				u->parrent = parrent;
+				u->parent = parent;
 				if (uvBlack)
 				{	// u and v both black, fix double black at u
 					fixDoubleBlack(u);
@@ -605,18 +586,18 @@ public:
 
 	void swapValues(node *u, node *v)
 	{
-		node * successor_copy = make_node(u);
+		node * successor_copy = new node(u);
 		successor_copy->right = v->right;
 		successor_copy->left = v->left;
-		successor_copy->parrent = v->parrent;
-		if (v->parrent->isNil == false && v->isOnLeft())
-			v->parrent->left = successor_copy;
-		else if (v->parrent->isNil == false)
-			v->parrent->right = successor_copy;
+		successor_copy->parent = v->parent;
+		if (v->parent->isNil == false && v->isOnLeft())
+			v->parent->left = successor_copy;
+		else if (v->parent->isNil == false)
+			v->parent->right = successor_copy;
 		if (v->left->isNil == false)
-			v->left->parrent = successor_copy;
+			v->left->parent = successor_copy;
 		if (v->right->isNil == false)
-			v->right->parrent = successor_copy;
+			v->right->parent = successor_copy;
 		if (root == v)
 			root = successor_copy;
 		delete v;
@@ -627,21 +608,21 @@ public:
 		if (x == root) // Reached root
 			return ;
 
-		node *sibling = x->sibling(), *parrent = x->parrent;
+		node *sibling = x->sibling(), *parent = x->parent;
 		if (sibling->isNil)
 		{ // No sibiling, double black pushed up
-			fixDoubleBlack(parrent);
+			fixDoubleBlack(parent);
 		}
 		else
 		{
 			if (sibling->color == RED)
 			{	// Sibling red
-				parrent->color = RED;
+				parent->color = RED;
 				sibling->color = BLACK;
 				if (sibling->isOnLeft()) // left case
-					right_rotate(parrent);
+					right_rotate(parent);
 				else	// right case
-					left_rotate(parrent);
+					left_rotate(parent);
 				fixDoubleBlack(x);
 			}
 			else
@@ -653,40 +634,40 @@ public:
 						if (sibling->isOnLeft())
 						{	// left left
 							sibling->left->color = sibling->color;
-							sibling->color = parrent->color;
-							right_rotate(parrent);
+							sibling->color = parent->color;
+							right_rotate(parent);
 						}
 						else
 						{	// right left
-							sibling->left->color = parrent->color;
+							sibling->left->color = parent->color;
 							right_rotate(sibling);
-							left_rotate(parrent);
+							left_rotate(parent);
 						}
 					}
 					else
 					{
 						if (sibling->isOnLeft())
 						{	// left right
-							sibling->right->color = parrent->color;
+							sibling->right->color = parent->color;
 							left_rotate(sibling);
-							right_rotate(parrent);
+							right_rotate(parent);
 						}
 						else
 						{	// right right
 							sibling->right->color = sibling->color;
-							sibling->color = parrent->color;
-							left_rotate(parrent);
+							sibling->color = parent->color;
+							left_rotate(parent);
 						}
 					}
-					parrent->color = BLACK;
+					parent->color = BLACK;
 				}
 				else
 				{	// 2 black children
 					sibling->color = RED;
-					if (parrent->color == BLACK)
-						fixDoubleBlack(parrent);
+					if (parent->color == BLACK)
+						fixDoubleBlack(parent);
 					else
-						parrent->color = BLACK;
+						parent->color = BLACK;
 				}
 			}
 		}

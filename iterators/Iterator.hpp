@@ -225,13 +225,13 @@ class iterator_map
 	
 	public:
 		typedef T													iterator_type;
-		typedef typename iterator_traits<T*>::iterator_category		iterator_category;
 		typedef typename iterator_traits<T*>::value_type			value_type;
 		typedef typename iterator_traits<T*>::difference_type		difference_type;
 		typedef typename  iterator_type::reference_type 			reference;
 		typedef typename  iterator_type::pointer					pointer;
 		// typedef typename iterator_traits<T*>::reference				reference;
 		// typedef typename iterator_traits<T*>::pointer				pointer;
+		typedef std::bidirectional_iterator_tag						iterator_category;
 
 
 
@@ -317,13 +317,14 @@ class reverse_iterator_map
 	
 	public:
 		typedef T													iterator_type;
-		typedef typename iterator_traits<T*>::iterator_category		iterator_category;
+		// typedef typename iterator_traits<T*>::iterator_category		iterator_category;
 		typedef typename iterator_traits<T*>::value_type			value_type;
 		typedef typename iterator_traits<T*>::difference_type		difference_type;
 		typedef typename  iterator_type::reference_type 			reference;
 		typedef typename  iterator_type::pointer					pointer;
 		// typedef typename iterator_traits<T*>::reference				reference;
 		// typedef typename iterator_traits<T*>::pointer				pointer;
+		typedef std::bidirectional_iterator_tag						iterator_category;
 
 
 
