@@ -45,7 +45,7 @@ class Set
 	};
 
 	public:
-		Tree<value_type, value_compare>	_tree;
+		Tree<value_type, value_compare, allocator_type>	_tree;
 		allocator_type			_alloc;
 		key_compare				_comp;
 		value_compare			_value_comp;
@@ -67,13 +67,13 @@ class Set
 			this->insert(first, last);
 		}
 
-		Set (Set<value_type> const & x) : _tree(x._comp, x._tree._size), _alloc(x._alloc),
-			_comp(x._comp), _value_comp(x._value_comp) // const? 
+		Set (Set<value_type> const &x) : _tree(x._comp, x._tree._size), _alloc(x._alloc),
+			_comp(x._comp), _value_comp(x._value_comp) 
 		{
 			_tree = x._tree;
 		}
 
-		Set &operator=(Set<value_type> &x)
+		Set &operator=(Set<value_type> const &x)
 		{
 			_comp = x._comp;
 			_alloc = x._alloc;
@@ -94,13 +94,11 @@ class Set
 		bool					empty() const { return  (size() > 0 ) ? false : true; }
 		size_type				max_size() const { return _alloc.max_size(); }
 
-		Pair<iterator,bool> insert(const value_type& val) // value
+		Pair<iterator,bool> insert(const value_type& val)
 		{
 			size_type	size_before		= _tree._size;
 			node		*res_of_insert	= _tree.insert_element(val);
 			bool		insert_status 	= _tree._size != size_before ? true : false;
-
-
 
 			return (ft::make_pair(iterator(res_of_insert, _tree.root), insert_status));
 		}
@@ -110,10 +108,10 @@ class Set
 		{
 			node		*successor = position.base()->successor();
 
-			if (val < successor->value && val > position)
+			if (_comp(val, successor->value) && _comp(*position, val))
 				return iterator(_tree.subtree_insert_after(position.base(), new node(val, _tree.nil)), _tree.root);
 			else
-				return insert(val);
+				return insert(val).first;
 		}
 
 		template <class InputIterator>
@@ -134,7 +132,7 @@ class Set
 		size_type erase (const value_type& k)
 		{
 			node *to_del_element = find(k).base();
-			if (to_del_element->value.first != k)
+			if (to_del_element->isNil || to_del_element->value != k)
 				return 0;
 			erase(iterator(to_del_element, _tree.root));
 			return 1;
@@ -163,37 +161,33 @@ class Set
 		iterator find(const key_type& k)
 		{
 			node *tmp = _tree.root;
-			node *tmp_p = _tree.nil;
 
 			while (tmp != _tree.nil)
 			{
 				if (tmp->value == k)
 					return iterator(tmp, _tree.root);
-				tmp_p = tmp;
 				if (_comp(k, tmp->value))
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
 			}
-			return iterator(tmp_p, _tree.root);
+			return iterator(tmp, _tree.root);
 		}
 
 		const_iterator find (const key_type& k) const
 		{
 			node *tmp = _tree.root;
-			node *tmp_p = _tree.nil;
 
 			while (tmp != _tree.nil)
 			{
 				if (tmp->value == k)
 					return iterator(tmp, _tree.root);
-				tmp_p = tmp;
 				if (_comp(k, tmp->value))
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
 			}
-			return iterator(tmp_p, _tree.root);
+			return iterator(tmp, _tree.root);
 		}
 
 		size_type count (const key_type& k) const
@@ -206,7 +200,7 @@ class Set
 		}
 
 		key_compare key_comp() const { return _comp; }
-
+		value_compare value_comp() const { return _value_comp; }
 		iterator lower_bound (const key_type& k)
 		{
 			node	*tmp	= _tree.root;

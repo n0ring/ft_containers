@@ -46,7 +46,7 @@ class Map
 	};
 
 	public:
-		Tree<value_type, value_compare>	_tree;
+		Tree<value_type, value_compare, allocator_type>	_tree;
 		allocator_type			_alloc;
 		key_compare				_comp;
 		value_compare			_value_comp;
@@ -68,13 +68,13 @@ class Map
 			this->insert(first, last);
 		}
 
-		Map (Map<Key, T> & x) : _tree(x._comp, x._tree._size), _alloc(x._alloc),
+		Map (Map<Key, T> const &x) : _tree(x._comp, x._tree._size), _alloc(x._alloc),
 			_comp(x._comp), _value_comp(x._value_comp) // const? 
 		{
 			_tree = x._tree;
 		}
 
-		Map &operator=(Map<Key, T> &x)
+		Map &operator=(Map<Key, T> const &x)
 		{
 			_comp = x._comp;
 			_alloc = x._alloc;
@@ -122,7 +122,7 @@ class Map
 		{
 			node		*successor = position.base()->successor();
 
-			if (val.first < successor->value.first && val.first > position->first)
+			if (_comp(val.first, successor->value.first) && _comp(position->first, val.first))
 				return iterator(_tree.subtree_insert_after(position.base(), new node(val, _tree.nil)), _tree.root);
 			else
 				return insert(val).first;

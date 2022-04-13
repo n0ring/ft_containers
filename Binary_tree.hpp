@@ -7,10 +7,12 @@
 #define RED				1
 #define DOUBLE_BLACK	2
 
-// template<typename Key, typename Value>
+
+
 template<typename value_type>
 struct node
-{		
+{	
+
 		typedef 	value_type& 			reference_type;
 		typedef		value_type*				pointer;
 
@@ -26,6 +28,8 @@ struct node
 		parent(other->right), value(other->value), isNil(false), height(other->height), color(other->color)
 	{
 	}
+
+
 
 
 	node(value_type const &p, node *nil) : left(nil), right(nil),
@@ -200,24 +204,36 @@ struct node
 		return (b < a || b == a);
 	}
 
-template<typename value_type, typename Compare>
+template<typename value_type, typename Compare, typename Alloc>
 class Tree
 {
 public:
-		typedef node<value_type>				node;	
-		typedef size_t							size_type;
-		typedef	Compare							key_compare;
-
+		typedef node<value_type>								node;	
+		typedef size_t											size_type;
+		typedef	Compare											key_compare;
+		typedef typename Alloc::template rebind<node>::other	alloc;
+		
 		node		*nil;
 		node		*root;
 		size_type	_size;
 		key_compare	_comp;
+		alloc		_alloc;
 
 public:
 
+
+
+
+	void delete_node(node *n)
+	{
+		_alloc.deallocate(n, sizeof(node));
+	}
+
 	Tree(const key_compare& comp = key_compare(), size_type size = 0) : _size(size), _comp(comp)
 	{
-		nil = new node();
+		// nil = new node();
+		nil = _alloc.allocate(1);
+		_alloc.construct(nil, node());
 		nil->left = nil;
 		nil->right = nil;
 		nil->parent = nil;
@@ -236,7 +252,7 @@ public:
 		root = other.clone_tree(other.root, root, nil);
 	}
 
-	Tree &operator=(Tree &other)
+	Tree &operator=(Tree const &other)
 	{
 		if (this != &other)
 		{
@@ -287,11 +303,27 @@ public:
 		delete root;
 	}
 
- 	node *clone_tree(node *root, node *parent, node *nil) const
+	// node *make_node(const node node_type = node()) const
+	// {
+	// 	node * new_node = _alloc.allocate(1);
+	// 	_alloc.construct(new_node, node_type);
+	// 	return (new_node);
+	// }
+
+	// node *make_node(value_type const &p) const
+	// {
+	// 	node *new_node = _alloc.allocate(1);
+	// 	_alloc.construct(new_node, node(p, nil));
+	// 	return (new_node);
+	// }
+
+ 	node *clone_tree(node const *root, node *parent, node *nil) const
 	{	
 		if (root->isNil)
 			return (nil);
 		node *new_el = new node(*root);
+		// node *new_el = make_node(*root);
+
 		new_el->parent = parent;
 		new_el->left = clone_tree(root->left, new_el, nil);
 		new_el->right = clone_tree(root->right, new_el, nil);
@@ -677,8 +709,6 @@ public:
 			}
 		}
 	}
-
-
 };
 
 

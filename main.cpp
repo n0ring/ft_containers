@@ -14,19 +14,18 @@
 #include <set>
 
 
-// #include "iterators/Iterator.hpp"
-// operator = in iterators
+// // #include "iterators/Iterator.hpp"
+// // operator = in iterators
 
-// stack or heap??
+// // stack or heap??
 
 int main(void)
 {
 	// vector_test();
 	// stack_test();
 	// pair_test();
-	map_test();
+	// map_test();
 	set_test();
-
 	return (0);
 }
 
@@ -34,5 +33,6 @@ int main(void)
 /*
 3. try catch in stack vector map 
 4. range errors 
+-> lexicographical_compare (some shit with it on for)
 
 */
