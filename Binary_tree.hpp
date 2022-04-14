@@ -231,9 +231,9 @@ public:
 
 	Tree(const key_compare& comp = key_compare(), size_type size = 0) : _size(size), _comp(comp)
 	{
-		// nil = new node();
-		nil = _alloc.allocate(1);
-		_alloc.construct(nil, node());
+		nil = make_node();
+		// nil = _alloc.allocate(1);
+		// _alloc.construct(nil, node());
 		nil->left = nil;
 		nil->right = nil;
 		nil->parent = nil;
@@ -246,7 +246,7 @@ public:
 		delete nil;
 	}
 
-	Tree(Tree const & other) : nil (new node()), root(nil),
+	Tree(Tree const & other) : nil (make_node()), root(nil),
 		_size(other._size), _comp(other._comp)
 	{
 		root = other.clone_tree(other.root, root, nil);
@@ -303,19 +303,19 @@ public:
 		delete root;
 	}
 
-	// node *make_node(const node node_type = node()) const
-	// {
-	// 	node * new_node = _alloc.allocate(1);
-	// 	_alloc.construct(new_node, node_type);
-	// 	return (new_node);
-	// }
+	node* make_node(const node node_type = node()) 
+	{
+		node * new_node = _alloc.allocate(1);
+		_alloc.construct(new_node, node_type);
+		return (new_node);
+	}
 
-	// node *make_node(value_type const &p) const
-	// {
-	// 	node *new_node = _alloc.allocate(1);
-	// 	_alloc.construct(new_node, node(p, nil));
-	// 	return (new_node);
-	// }
+	node* make_node(value_type const &p)
+	{
+		node *new_node = _alloc.allocate(1);
+		_alloc.construct(new_node, node(p, nil));
+		return (new_node);
+	}
 
  	node *clone_tree(node const *root, node *parent, node *nil) const
 	{	
@@ -342,7 +342,7 @@ public:
 	
 		if (subtree->isNil == false && subtree->value == val)
 			return subtree;
-		new_node = new node(val, nil);
+		new_node = make_node(val);
 		new_node->color = RED;	
 		_size++;
 		if (subtree == nil)
@@ -623,7 +623,7 @@ public:
 
 	void swapValues(node *u, node *v)
 	{
-		node * successor_copy = new node(u);
+		node * successor_copy = make_node(u);
 		successor_copy->right = v->right;
 		successor_copy->left = v->left;
 		successor_copy->parent = v->parent;
