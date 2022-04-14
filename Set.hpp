@@ -44,7 +44,7 @@ class Set
 			}
 	};
 
-	public:
+	private:
 		Tree<value_type, value_compare, allocator_type>	_tree;
 		allocator_type			_alloc;
 		key_compare				_comp;
