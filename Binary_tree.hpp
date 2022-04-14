@@ -226,14 +226,15 @@ public:
 
 	void delete_node(node *n)
 	{
+		_alloc.destroy(n);
 		_alloc.deallocate(n, sizeof(node));
 	}
 
 	Tree(const key_compare& comp = key_compare(), size_type size = 0) : _size(size), _comp(comp)
 	{
-		nil = make_node();
-		// nil = _alloc.allocate(1);
-		// _alloc.construct(nil, node());
+		// nil = make_node();
+		nil = _alloc.allocate(1);
+		_alloc.construct(nil, node());
 		nil->left = nil;
 		nil->right = nil;
 		nil->parent = nil;
@@ -243,7 +244,7 @@ public:
 	~Tree()
 	{
 		delete_tree(root);
-		delete nil;
+		delete_node(nil);
 	}
 
 	Tree(Tree const & other) : nil (make_node()), root(nil),
@@ -300,29 +301,29 @@ public:
 			return ;
 		delete_tree(root->left);
 		delete_tree(root->right);
-		delete root;
+		delete_node(root);
 	}
 
-	node* make_node(const node node_type = node()) 
+	node *make_node(const node node_type = node())
 	{
 		node * new_node = _alloc.allocate(1);
 		_alloc.construct(new_node, node_type);
 		return (new_node);
 	}
 
-	node* make_node(value_type const &p)
+	node *make_node(value_type const &p)
 	{
 		node *new_node = _alloc.allocate(1);
 		_alloc.construct(new_node, node(p, nil));
 		return (new_node);
 	}
 
- 	node *clone_tree(node const *root, node *parent, node *nil) const
+ 	node *clone_tree(node *root, node *parent, node *nil) const
 	{	
 		if (root->isNil)
 			return (nil);
 		node *new_el = new node(*root);
-		// node *new_el = make_node(*root);
+		node *new_el = make_node(*root);
 
 		new_el->parent = parent;
 		new_el->left = clone_tree(root->left, new_el, nil);
@@ -586,7 +587,7 @@ public:
 			else
 				parent->right = nil;
 			}
-			delete v;
+			delete_node(v);
 			return;
 		}
 		if (v->left->isNil || v->right->isNil)
@@ -595,7 +596,7 @@ public:
 			{	// v is root, assign the u to root and delete v
 				root = u;
 				u->left = u->right = u->parent = nil;
-				delete v;
+				delete_node(v);
 			}
 			else
 			{	// Detach v from tree and move u up
@@ -603,7 +604,7 @@ public:
 					parent->left = u;
 				else
 					parent->right = u;
-				delete v;
+				delete_node(v);
 				u->parent = parent;
 				if (uvBlack)
 				{	// u and v both black, fix double black at u
@@ -623,7 +624,7 @@ public:
 
 	void swapValues(node *u, node *v)
 	{
-		node * successor_copy = make_node(u);
+		node * successor_copy = make_node(*u);
 		successor_copy->right = v->right;
 		successor_copy->left = v->left;
 		successor_copy->parent = v->parent;
@@ -637,7 +638,7 @@ public:
 			v->right->parent = successor_copy;
 		if (root == v)
 			root = successor_copy;
-		delete v;
+		delete_node(v);
 	}
 
 	void fixDoubleBlack(node *x)

@@ -184,7 +184,8 @@ class Vector
 			typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type* = 0)
 		{
 			size_type		dist		= std::distance(first, last);
-
+			if (dist < 0)
+				throw std::range_error("Range error");
 			if (dist < _capacity)
 			{
 				_removeElements(this->begin(), this->end());
@@ -319,6 +320,7 @@ class Vector
 			bool result = true;
 			size_t i = 0;
 
+
 			for (;first != last; ++first, ++i) {
 				try { reserved_buffer[i] = *first; }
 				catch (...) { result = false; break; }
@@ -424,12 +426,7 @@ class Vector
 			_array = tmp_arr;
 			_size = tmp_size;
 			_capacity = tmp_cap;
-			_alloc = tmp_alloc;
-			// std::swap(_array, x._array);
-			// std::swap(_alloc, x._alloc);
-			// std::swap(_capacity, x._capacity);
-			// std::swap(_size, x._size);
-			
+			_alloc = tmp_alloc;			
 		}
 
 		// iterators funcs
@@ -488,5 +485,15 @@ class Vector
 		}
 
 }
+
+namespace std
+{
+	template <class T, class Alloc>
+	void swap (ft::Vector<T,Alloc>& x, ft::Vector<T,Alloc>& y)
+	{
+		x.swap(y);
+	}
+}
+
 #endif // !VECTOR
 

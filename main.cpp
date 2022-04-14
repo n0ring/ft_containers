@@ -30,9 +30,3 @@ int main(void)
 }
 
 
-/*
-3. try catch in stack vector map 
-4. range errors 
--> lexicographical_compare (some shit with it on for)
-
-*/
