@@ -362,19 +362,26 @@ static void insert_test_u(std::vector<int> &V, struct s_time_res &res)
 	V.push_back(m.empty());
 	for (int i = 0; i < 1000; i++)
 		m.insert(i * 100);
-
 	V.push_back(m.insert(100).second);
 	V.push_back(m.insert(1000000).second);
-	
 	_set m2;
 	m2.insert(m.begin(), m.end());
 	V.push_back(m2.size());
-
-
 	_set m3(m2);
 	m3.insert(12);
 	_set::iterator it = m3.find(12);
 	m3.insert(it, 13);
+
+	_set st;
+	it = st.end();
+    for (int i = 0; i < 5000; ++i) {
+        st.insert(it, i);
+    }
+    _set::iterator it2 = st.begin();
+    for (; it2 != st.end(); ++it2) {
+        V.push_back(*it2);
+    }
+
 
 	res.ft_end = timer();
 }
@@ -401,8 +408,16 @@ static void insert_test_s(std::vector<int> &V, struct s_time_res &res)
 	m3.insert(12);
 	_set::iterator it = m3.find(12);
 	m3.insert(it, 13);
-
 	
+	_set st;
+	it = st.end();
+    for (int i = 0; i < 5000; ++i) {
+        st.insert(it, i);
+    }
+    _set::iterator it2 = st.begin();
+    for (; it2 != st.end(); ++it2) {
+        V.push_back(*it2);
+    }
 	res.std_end = timer();
 }
 

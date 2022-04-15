@@ -4,8 +4,8 @@
 #include <iostream>
 #include "pair.hpp"
 #include "utils.hpp"
-#include "Binary_tree.hpp"
-#include "iterators/Iterator.hpp"
+#include "Tree.hpp"
+#include "Iterator.hpp"
 
 namespace ft
 {
@@ -106,7 +106,7 @@ class Set
 
 		iterator insert (iterator position, const value_type& val)
 		{
-			node		*successor = position.base()->successor();
+			node		*successor	= position.base()->successor();
 
 			if (_comp(val, successor->value) && _comp(*position, val))
 				return iterator(_tree.subtree_insert_after(position.base(), new node(val, _tree.nil)), _tree.root);
@@ -270,7 +270,6 @@ class Set
 			std::swap(x._tree.root, this->_tree.root);
 			std::swap(x._tree.nil, this->_tree.nil);
 			std::swap(x._tree._size, this->_tree._size);
-
 			std::swap(x._alloc, this->_alloc);
 			std::swap(x._comp, this->_comp);
 			std::swap(x._value_comp, this->_value_comp);
@@ -329,12 +328,7 @@ namespace std
 	template <class Key, class T, class Compare, class Alloc>
 	void swap (ft::Set<T,Compare,Alloc>& x, ft::Set<T,Compare,Alloc>& y)
 	{
-		std::swap(x._tree.root, y._tree.root);
-		std::swap(x._tree._size, y._tree._size);
-		std::swap(x._tree.nil, y._tree.nil);
-		std::swap(x._alloc, y._alloc);
-		std::swap(x._comp, y._comp);
-		std::swap(x._value_comp, y._value_comp);
+		x.swap(y);
 	}
 }
 #endif // !MAP_HPP

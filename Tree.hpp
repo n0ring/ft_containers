@@ -21,24 +21,20 @@ struct node
 		node		*parent;
 		value_type	value;
 		bool		isNil;
-		int			height;
 		char		color;
 	
 	node(node const *other) : left(other->left), right(other->right),
-		parent(other->right), value(other->value), isNil(false), height(other->height), color(other->color)
+		parent(other->right), value(other->value), isNil(false), color(other->color)
 	{
 	}
 
-
-
-
 	node(value_type const &p, node *nil) : left(nil), right(nil),
-		parent(nil), value(p), isNil(false), height(0), color(BLACK)
+		parent(nil), value(p), isNil(false), color(BLACK)
 	{
 	}
 	
 	// for nil el
-	node(void) : left(NULL), right(NULL), parent(NULL), value(), isNil(true), height(0), color(BLACK)
+	node(void) : left(NULL), right(NULL), parent(NULL), value(), isNil(true), color(BLACK)
 	{
 		left = this;
 		right = this;
@@ -263,15 +259,6 @@ public:
 		return (*this);
 	}
 
-	int subtree_size(node *subtree)
-	{
-		if (subtree == nil)
-			return 0;
-		if (subtree->left == nil && subtree->right == nil)
-			return 1;
-		return (subtree_size(subtree->left) + subtree_size(subtree->right) + 1);
-	}
-
 	node *find(const value_type& value) const
 	{
 		node *tmp = root;
@@ -435,7 +422,7 @@ public:
 		node	*x;
 		node	*parrent_tmp = y->parent;
 
-		if (y->left->height > y->right->height)
+		if (y->right->isNil)
 			x = y->left;
 		else
 			x = y->right;

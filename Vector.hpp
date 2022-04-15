@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <memory>
 #include <iostream>
-#include "iterators/Iterator.hpp"
+#include "Iterator.hpp"
 #include "utils.hpp"
 
 
@@ -47,7 +47,7 @@ class Vector
 				_array = nullptr;
 			}
 		}
-		
+
 		void _realloc(size_type new_cap)
 		{
 			value_type *new_arr = _alloc.allocate(new_cap);

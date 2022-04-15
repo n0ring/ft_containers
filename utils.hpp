@@ -96,10 +96,6 @@ bool equal(InputIt1 first1, InputIt1 last1,
 	}
 	return true;
 }
-
-	// template <class T> struct less : binary_function <T,T,bool> {
-	// bool operator() (const T& x, const T& y) const {return x<y;}
-
 }
 
 
@@ -114,7 +110,6 @@ struct s_time_res
 	time_t ft_end;
 }  ;
 // struct s_time_res	t_res;
-
 
 time_t timer();
 void print_res(std::string test, std::vector<int> &s,

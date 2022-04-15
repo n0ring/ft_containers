@@ -8,16 +8,10 @@
 #include "Stack.hpp"
 #include "Vector.hpp"
 #include "pair.hpp"
-#include "Binary_tree.hpp"
+#include "Tree.hpp"
 #include "Map.hpp"
 #include "Set.hpp"
 #include <set>
-
-
-// // #include "iterators/Iterator.hpp"
-// // operator = in iterators
-
-// // stack or heap??
 
 int main(void)
 {
@@ -28,5 +22,3 @@ int main(void)
 	set_test();
 	return (0);
 }
-
-

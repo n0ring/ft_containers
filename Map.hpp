@@ -4,8 +4,8 @@
 #include <iostream>
 #include "pair.hpp"
 #include "utils.hpp"
-#include "Binary_tree.hpp"
-#include "iterators/Iterator.hpp"
+#include "Tree.hpp"
+#include "Iterator.hpp"
 
 namespace ft
 {
@@ -47,9 +47,9 @@ class Map
 
 	private:
 		Tree<value_type, value_compare, allocator_type>	_tree;
-		allocator_type			_alloc;
-		key_compare				_comp;
-		value_compare			_value_comp;
+		allocator_type									_alloc;
+		key_compare										_comp;
+		value_compare									_value_comp;
 
 	public:
 
@@ -78,7 +78,6 @@ class Map
 		{
 			_comp = x._comp;
 			_alloc = x._alloc;
-
 			_tree = x._tree;
 			return *this;
 		}
@@ -354,12 +353,7 @@ namespace std
 	template <class Key, class T, class Compare, class Alloc>
 	void swap (ft::Map<Key,T,Compare,Alloc>& x, ft::Map<Key,T,Compare,Alloc>& y)
 	{
-		std::swap(x._tree.root, y._tree.root);
-		std::swap(x._tree._size, y._tree._size);
-		std::swap(x._tree.nil, y._tree.nil);
-		std::swap(x._alloc, y._alloc);
-		std::swap(x._comp, y._comp);
-		std::swap(x._value_comp, y._value_comp);
+		x.swap(y);
 	}
 }
 #endif // !MAP_HPP
