@@ -165,12 +165,12 @@ class Vector
 
 		reference		at(size_type n) {
 			if (n >= _size)
-				throw std::out_of_range("vector");
+				throw std::out_of_range("out_of_range");
 			return (_array[n]);
 		}
 		const_reference	at (size_type n) const {
 			if (n >= _size)
-				throw std::out_of_range("vector");
+				throw std::out_of_range("out_of_range");
 			return (_array[n]);
 		}
 		reference		front() { return *(this->begin()); }
@@ -334,7 +334,7 @@ class Vector
 		void insert (iterator position, InputIterator first, InputIterator last,
 			typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
-			size_type		new_size				= _size + std::distance(first, last);
+			size_type		new_size			= _size + std::distance(first, last);
 			size_type		insertIndex			= std::distance(this->begin(), position);
 			value_type		*new_arr;
 			size_type		i = 0;

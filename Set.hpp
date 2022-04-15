@@ -109,7 +109,7 @@ class Set
 			node		*successor	= position.base()->successor();
 
 			if (_comp(val, successor->value) && _comp(*position, val))
-				return iterator(_tree.subtree_insert_after(position.base(), new node(val, _tree.nil)), _tree.root);
+				return iterator(_tree.subtree_insert_after(position.base(), _tree.make_node(val)), _tree.root);
 			else
 				return insert(val).first;
 		}

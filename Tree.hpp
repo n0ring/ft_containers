@@ -216,9 +216,6 @@ public:
 
 public:
 
-
-
-
 	void delete_node(node *n)
 	{
 		_alloc.deallocate(n, sizeof(node));
@@ -240,9 +237,9 @@ public:
 		delete nil;
 	}
 
-	Tree(Tree const & other) : nil(new node()), root(nil),
-		_size(other._size), _comp(other._comp)
+	Tree(Tree const & other) : nil(make_node()), _size(other._size), _comp(other._comp)
 	{
+		root = nil;
 		root = other.clone_tree(other.root, root, nil);
 	}
 
@@ -288,17 +285,20 @@ public:
 		delete root;
 	}
 
-	node *make_node(const node node_type = node())
-	{
-		node * new_node = _alloc.allocate(1);
-		_alloc.construct(new_node, node_type);
-		return (new_node);
-	}
-
 	node *make_node(void)
 	{
 		node * new_node = _alloc.allocate(1);
 		_alloc.construct(new_node, node());
+		new_node->left = new_node;
+		new_node->right = new_node;
+		new_node->parent = new_node;
+		return (new_node);
+	}
+
+	node *make_node(const node *node_ptr)
+	{
+		node * new_node = _alloc.allocate(1);
+		_alloc.construct(new_node, node(node_ptr));
 		return (new_node);
 	}
 
@@ -313,8 +313,7 @@ public:
 	{	
 		if (root->isNil)
 			return (nil);
-		node *new_el = new node(*root);
-		// node *new_el = make_node(*root);
+		node *new_el = new node(root);
 
 		new_el->parent = parent;
 		new_el->left = clone_tree(root->left, new_el, nil);
@@ -413,7 +412,6 @@ public:
 			x->parent->right = y;
 		y->right = x;
 		x->parent = y;
-		// update_subtree_props(x);
 	}
 
 
@@ -615,7 +613,7 @@ public:
 
 	void swapValues(node *u, node *v)
 	{
-		node * successor_copy = make_node(*u);
+		node * successor_copy = make_node(u);
 		successor_copy->right = v->right;
 		successor_copy->left = v->left;
 		successor_copy->parent = v->parent;
